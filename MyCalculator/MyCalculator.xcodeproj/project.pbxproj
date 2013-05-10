@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3420F354173CCC1800146838 /* CalculatorWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3420F352173CCC1800146838 /* CalculatorWindowController.m */; };
+		3420F355173CCC1800146838 /* CalculatorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3420F353173CCC1800146838 /* CalculatorWindowController.xib */; };
+		3420F358173CCCBF00146838 /* CalculatorAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3420F357173CCCBF00146838 /* CalculatorAppController.m */; };
 		34E547361738A5FA000CCC11 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E547351738A5FA000CCC11 /* Cocoa.framework */; };
 		34E547401738A5FA000CCC11 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34E5473E1738A5FA000CCC11 /* InfoPlist.strings */; };
 		34E547421738A5FA000CCC11 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E547411738A5FA000CCC11 /* main.m */; };
@@ -30,6 +33,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3420F351173CCC1800146838 /* CalculatorWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculatorWindowController.h; sourceTree = "<group>"; };
+		3420F352173CCC1800146838 /* CalculatorWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalculatorWindowController.m; sourceTree = "<group>"; };
+		3420F353173CCC1800146838 /* CalculatorWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CalculatorWindowController.xib; sourceTree = "<group>"; };
+		3420F356173CCCBF00146838 /* CalculatorAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculatorAppController.h; sourceTree = "<group>"; };
+		3420F357173CCCBF00146838 /* CalculatorAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalculatorAppController.m; sourceTree = "<group>"; };
 		34E547321738A5FA000CCC11 /* MyCalculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyCalculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		34E547351738A5FA000CCC11 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		34E547381738A5FA000CCC11 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -117,6 +125,11 @@
 				34E547471738A5FA000CCC11 /* AppDelegate.h */,
 				34E547481738A5FA000CCC11 /* AppDelegate.m */,
 				34E5474A1738A5FA000CCC11 /* MainMenu.xib */,
+				3420F351173CCC1800146838 /* CalculatorWindowController.h */,
+				3420F356173CCCBF00146838 /* CalculatorAppController.h */,
+				3420F357173CCCBF00146838 /* CalculatorAppController.m */,
+				3420F352173CCC1800146838 /* CalculatorWindowController.m */,
+				3420F353173CCC1800146838 /* CalculatorWindowController.xib */,
 				34E5473C1738A5FA000CCC11 /* Supporting Files */,
 			);
 			path = MyCalculator;
@@ -227,6 +240,7 @@
 				34E547401738A5FA000CCC11 /* InfoPlist.strings in Resources */,
 				34E547461738A5FA000CCC11 /* Credits.rtf in Resources */,
 				34E5474C1738A5FA000CCC11 /* MainMenu.xib in Resources */,
+				3420F355173CCC1800146838 /* CalculatorWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +277,8 @@
 			files = (
 				34E547421738A5FA000CCC11 /* main.m in Sources */,
 				34E547491738A5FA000CCC11 /* AppDelegate.m in Sources */,
+				3420F354173CCC1800146838 /* CalculatorWindowController.m in Sources */,
+				3420F358173CCCBF00146838 /* CalculatorAppController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,9 +363,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -374,8 +390,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				SDKROOT = macosx;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};
@@ -386,6 +402,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MyCalculator/MyCalculator-Prefix.pch";
 				INFOPLIST_FILE = "MyCalculator/MyCalculator-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -398,6 +415,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MyCalculator/MyCalculator-Prefix.pch";
 				INFOPLIST_FILE = "MyCalculator/MyCalculator-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -452,6 +470,7 @@
 				34E547651738A5FA000CCC11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		34E547661738A5FA000CCC11 /* Build configuration list for PBXNativeTarget "MyCalculatorTests" */ = {
 			isa = XCConfigurationList;
@@ -460,6 +479,7 @@
 				34E547681738A5FA000CCC11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
