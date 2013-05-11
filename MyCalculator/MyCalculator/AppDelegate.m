@@ -7,12 +7,20 @@
 //
 
 #import "AppDelegate.h"
+#import "CalculatorAppController.h"
 
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
+    CalculatorAppController *cac = [[CalculatorAppController alloc] init];
+    [cac showWindow];
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+    return NSTerminateNow;
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender

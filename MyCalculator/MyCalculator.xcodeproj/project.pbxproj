@@ -13,7 +13,6 @@
 		34E547361738A5FA000CCC11 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E547351738A5FA000CCC11 /* Cocoa.framework */; };
 		34E547401738A5FA000CCC11 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 34E5473E1738A5FA000CCC11 /* InfoPlist.strings */; };
 		34E547421738A5FA000CCC11 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E547411738A5FA000CCC11 /* main.m */; };
-		34E547461738A5FA000CCC11 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 34E547441738A5FA000CCC11 /* Credits.rtf */; };
 		34E547491738A5FA000CCC11 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 34E547481738A5FA000CCC11 /* AppDelegate.m */; };
 		34E5474C1738A5FA000CCC11 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34E5474A1738A5FA000CCC11 /* MainMenu.xib */; };
 		34E547541738A5FA000CCC11 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34E547531738A5FA000CCC11 /* SenTestingKit.framework */; };
@@ -47,7 +46,6 @@
 		34E5473F1738A5FA000CCC11 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		34E547411738A5FA000CCC11 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		34E547431738A5FA000CCC11 /* MyCalculator-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MyCalculator-Prefix.pch"; sourceTree = "<group>"; };
-		34E547451738A5FA000CCC11 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		34E547471738A5FA000CCC11 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		34E547481738A5FA000CCC11 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		34E5474B1738A5FA000CCC11 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -125,9 +123,9 @@
 				34E547471738A5FA000CCC11 /* AppDelegate.h */,
 				34E547481738A5FA000CCC11 /* AppDelegate.m */,
 				34E5474A1738A5FA000CCC11 /* MainMenu.xib */,
-				3420F351173CCC1800146838 /* CalculatorWindowController.h */,
 				3420F356173CCCBF00146838 /* CalculatorAppController.h */,
 				3420F357173CCCBF00146838 /* CalculatorAppController.m */,
+				3420F351173CCC1800146838 /* CalculatorWindowController.h */,
 				3420F352173CCC1800146838 /* CalculatorWindowController.m */,
 				3420F353173CCC1800146838 /* CalculatorWindowController.xib */,
 				34E5473C1738A5FA000CCC11 /* Supporting Files */,
@@ -142,7 +140,6 @@
 				34E5473E1738A5FA000CCC11 /* InfoPlist.strings */,
 				34E547411738A5FA000CCC11 /* main.m */,
 				34E547431738A5FA000CCC11 /* MyCalculator-Prefix.pch */,
-				34E547441738A5FA000CCC11 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -238,7 +235,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				34E547401738A5FA000CCC11 /* InfoPlist.strings in Resources */,
-				34E547461738A5FA000CCC11 /* Credits.rtf in Resources */,
 				34E5474C1738A5FA000CCC11 /* MainMenu.xib in Resources */,
 				3420F355173CCC1800146838 /* CalculatorWindowController.xib in Resources */,
 			);
@@ -307,14 +303,6 @@
 				34E5473F1738A5FA000CCC11 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		34E547441738A5FA000CCC11 /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				34E547451738A5FA000CCC11 /* en */,
-			);
-			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
 		34E5474A1738A5FA000CCC11 /* MainMenu.xib */ = {

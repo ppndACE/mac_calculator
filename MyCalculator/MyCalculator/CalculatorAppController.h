@@ -6,8 +6,14 @@
 //  Copyright (c) 2013 Matthew McAllister. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
+#import "CalculatorWindowController.h"
 
 @interface CalculatorAppController : NSObject
+{
+    CalculatorWindowController *mycwc;
+}
+
+- (void) showWindow;
 
 @end
