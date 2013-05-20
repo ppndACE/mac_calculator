@@ -21,12 +21,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "MyCalculator/CalculatorWindowController.m"
-         timestampString = "389987466.547306"
+         timestampString = "390777581.467301"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "237"
-         endingLineNumber = "237"
-         landmarkName = "-Evaluate"
+         startingLineNumber = "362"
+         endingLineNumber = "362"
+         landmarkName = "-EvaluateExpWithOp:atIndex:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -34,11 +34,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "MyCalculator/CalculatorWindowController.m"
-         timestampString = "389987466.547306"
+         timestampString = "390777581.467301"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "225"
-         endingLineNumber = "225"
+         startingLineNumber = "332"
+         endingLineNumber = "332"
          landmarkName = "-On_Equals:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -47,12 +47,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "MyCalculator/CalculatorWindowController.m"
-         timestampString = "389987466.547306"
+         timestampString = "390777581.467301"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "183"
-         endingLineNumber = "183"
-         landmarkName = "-On_Plus:"
+         startingLineNumber = "380"
+         endingLineNumber = "380"
+         landmarkName = "-EvaluateExpWithOp:atIndex:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -60,11 +60,37 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "MyCalculator/CalculatorWindowController.m"
-         timestampString = "389987466.547306"
+         timestampString = "390777581.467301"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "263"
-         endingLineNumber = "263"
+         startingLineNumber = "330"
+         endingLineNumber = "330"
+         landmarkName = "-On_Equals:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "MyCalculator/CalculatorWindowController.m"
+         timestampString = "390777581.467301"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "298"
+         endingLineNumber = "298"
+         landmarkName = "-On_RegOp:withString:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "No"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "MyCalculator/CalculatorWindowController.m"
+         timestampString = "390777581.467301"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "400"
+         endingLineNumber = "400"
          landmarkName = "-WriteToAnswerBox:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -73,12 +99,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "MyCalculator/CalculatorWindowController.m"
-         timestampString = "389987466.547306"
+         timestampString = "390777934.223277"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "252"
-         endingLineNumber = "252"
-         landmarkName = "-Evaluate"
+         startingLineNumber = "309"
+         endingLineNumber = "309"
+         landmarkName = "-On_Equals:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

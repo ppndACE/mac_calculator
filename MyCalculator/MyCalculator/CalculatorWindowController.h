@@ -8,12 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 
-typedef enum _OPERATOR{
-    eNONE,
-    PLUS,
-    MINUS,
+#define _OPERATOR_COUNT 5
+
+/* for now, this controls the order of operations and available operators */
+typedef enum _OPERATOR {
+    POW,
     MULT,
-    DIV
+    DIV,
+    PLUS,
+    MINUS
 } eOPERATOR;
 
 @interface CalculatorWindowController : NSWindowController
@@ -26,10 +29,12 @@ typedef enum _OPERATOR{
     BOOL equals_was_last_called;
     BOOL decimal_placed;
     
-    eOPERATOR operators;
+    NSMutableArray *numbers;
+    NSMutableArray *operators;
 }
 
 @property (weak) IBOutlet NSTextField *answer_box;
+@property (weak) IBOutlet NSTextField *equation;
 
 - (id) init;
 - (id) initWithWindow:(NSWindow *)window;
@@ -58,8 +63,12 @@ typedef enum _OPERATOR{
 - (IBAction) On_Minus:(id)sender;
 - (IBAction) On_Mult:(id)sender;
 - (IBAction) On_Div:(id)sender;
+- (IBAction) On_Pow:(id)sender;
+
+- (void) On_RegOp:(eOPERATOR)op withString:(NSString *)s;
 
 - (IBAction) On_Equals:(id)sender;
+- (NSNumber *) EvaluateExpWithOp:(eOPERATOR)op atIndex:(NSInteger)i;
 
 
 
