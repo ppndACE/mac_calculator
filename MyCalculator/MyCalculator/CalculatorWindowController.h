@@ -6,24 +6,32 @@
 //  Copyright (c) 2013 Matthew McAllister. All rights reserved.
 //
 
+#ifndef _CALCULATOR_WINDOW_CONTROLLER_H_
+#define _CALCULATOR_WINDOW_CONTROLLER_H_
+
 #import <Cocoa/Cocoa.h>
 
 #define _OPERATOR_COUNT 5
+#define POW @"POW"
+#define MULT @"MULT"
+#define DIV @"DIV"
+#define PLUS @"PLUS"
+#define MINUS @"MINUS"
+
 
 /* for now, this controls the order of operations and available operators */
-typedef enum _OPERATOR {
-    POW,
-    MULT,
-    DIV,
-    PLUS,
-    MINUS
-} eOPERATOR;
+//typedef enum _OPERATOR {
+//    POW = @"POW",
+//    MULT,
+//    DIV,
+//    PLUS,
+//    MINUS
+//} eOPERATOR;
 
 @interface CalculatorWindowController : NSWindowController
 {
     double current_value;
-    double first;
-    double second;
+    int levels_of_brackets;
     
     BOOL operator_called;
     BOOL equals_was_last_called;
@@ -31,13 +39,14 @@ typedef enum _OPERATOR {
     
     NSMutableArray *numbers;
     NSMutableArray *operators;
+    
+    NSDictionary *dict;
 }
 
 @property (weak) IBOutlet NSTextField *answer_box;
 @property (weak) IBOutlet NSTextField *equation;
 
 - (id) init;
-- (id) initWithWindow:(NSWindow *)window;
 - (void) windowDidLoad;
 
 - (IBAction) On_Clear:(id)sender;
@@ -58,6 +67,19 @@ typedef enum _OPERATOR {
 
 - (IBAction) On_Decimal:(id)sender;
 
+/********************* Brackets *********************/
+- (IBAction)On_Open_Bracket:(id)sender;
+- (IBAction)On_Close_Bracket:(id)sender;
+
+/********************* Functions *********************/
+- (IBAction)On_Sin:(id)sender;
+- (IBAction)On_Cos:(id)sender;
+- (IBAction)On_Tan:(id)sender;
+- (IBAction)On_Log:(id)sender;
+- (IBAction)On_Ln:(id)sender;
+- (IBAction)On_Root:(id)sender;
+- (IBAction)On_E:(id)sender;
+
 /********************* Operators *********************/
 - (IBAction) On_Plus:(id)sender;
 - (IBAction) On_Minus:(id)sender;
@@ -65,11 +87,16 @@ typedef enum _OPERATOR {
 - (IBAction) On_Div:(id)sender;
 - (IBAction) On_Pow:(id)sender;
 
-- (void) On_RegOp:(eOPERATOR)op withString:(NSString *)s;
+- (void) On_RegNum:(NSString *)s;
+- (void) On_RegOp:(NSString *)op withString:(NSString *)s;
+- (void) On_RegBracket:(NSString *)s;
 
 - (IBAction) On_Equals:(id)sender;
-- (NSNumber *) EvaluateExpWithOp:(eOPERATOR)op atIndex:(NSInteger)i;
+- (NSNumber *) EvaluateExpWithOp:(NSString *)op atIndex:(NSInteger)i;
 
 
 
 @end
+
+#endif
+

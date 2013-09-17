@@ -2,3 +2,9 @@ This project is a simple experiment with XCode and Objective-C for Mac OS X plat
 Features will be added at random if at all.
 UI inspiration taken from the windows calculator (of all things...) and the SHARP EL-520W.
 
+So much of this is just hacked together, especially the equations.
+- Need to find a better, more efficient way of storing and parsing these equations.
+
+UPDATE sept 14, 2013: Unfortunately, I haven't been able to put much work into finishing this project because I got sick during the second half of the semester.
+On top of work and school starting up, I regretfully am only starting to work on it again now.
+

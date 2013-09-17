@@ -6,6 +6,9 @@
 //  Copyright (c) 2013 Matthew McAllister. All rights reserved.
 //
 
+#ifndef _CALCULATOR_APP_CONTROLLER_H_
+#define _CALCULATOR_APP_CONTROLLER_H_
+
 #import <Cocoa/Cocoa.h>
 #import "CalculatorWindowController.h"
 
@@ -17,3 +20,6 @@
 - (void) showWindow;
 
 @end
+
+#endif
+

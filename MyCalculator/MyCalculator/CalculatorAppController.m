@@ -16,23 +16,8 @@
     if (!mycwc) {
         mycwc = [[CalculatorWindowController alloc] init];
     }
-
-    /* Display window modally */
-    //[NSApp runModalForWindow:[mycwc window]];
     
-    
-    NSModalSession calc_session = [NSApp beginModalSessionForWindow:[mycwc window]];
-    
-    //[mycwc showWindow:nil];
-    
-    for (;;) {
-        if ([NSApp runModalSession:calc_session] != NSRunContinuesResponse)
-            break;
-    }
-    [NSApp endModalSession:calc_session];
-    
-    
-    
+    [mycwc showWindow:nil];
 }
 
 @end

@@ -7,8 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "CalculatorAppController.h"
 
 int main(int argc, char *argv[])
 {
+    CalculatorAppController *ca = [[CalculatorAppController alloc] init];
+    [ca showWindow];
+    
     return NSApplicationMain(argc, (const char **)argv);
 }
