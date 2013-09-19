@@ -5,3 +5,10 @@
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
 #endif
+
+#define POW @"^"
+#define MULT @"*"
+#define DIV @"/"
+#define PLUS @"+"
+#define MINUS @"-"
+

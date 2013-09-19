@@ -10,37 +10,18 @@
 #define _CALCULATOR_WINDOW_CONTROLLER_H_
 
 #import <Cocoa/Cocoa.h>
-
-#define _OPERATOR_COUNT 5
-#define POW @"POW"
-#define MULT @"MULT"
-#define DIV @"DIV"
-#define PLUS @"PLUS"
-#define MINUS @"MINUS"
-
+#import "Equation.h"
 
 /* for now, this controls the order of operations and available operators */
-//typedef enum _OPERATOR {
-//    POW = @"POW",
-//    MULT,
-//    DIV,
-//    PLUS,
-//    MINUS
-//} eOPERATOR;
 
 @interface CalculatorWindowController : NSWindowController
 {
-    double current_value;
-    int levels_of_brackets;
-    
+    NSMutableString *current_value;
     BOOL operator_called;
     BOOL equals_was_last_called;
     BOOL decimal_placed;
     
-    NSMutableArray *numbers;
-    NSMutableArray *operators;
-    
-    NSDictionary *dict;
+    NSMutableArray *eq;
 }
 
 @property (weak) IBOutlet NSTextField *answer_box;
@@ -88,11 +69,9 @@
 - (IBAction) On_Pow:(id)sender;
 
 - (void) On_RegNum:(NSString *)s;
-- (void) On_RegOp:(NSString *)op withString:(NSString *)s;
-- (void) On_RegBracket:(NSString *)s;
+- (void) On_RegOp:(NSString *)op;
 
 - (IBAction) On_Equals:(id)sender;
-- (NSNumber *) EvaluateExpWithOp:(NSString *)op atIndex:(NSInteger)i;
 
 
 

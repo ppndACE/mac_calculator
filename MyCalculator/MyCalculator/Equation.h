@@ -10,14 +10,22 @@
 #define _EQUATION_H_
 
 #import <Foundation/Foundation.h>
+#import "Stack.h"
 
 @interface Equation : NSObject
 {
-    NSNumber *level;
-    
+    Stack *operators; // stack to hold operators
+    Stack *output; // stack of numbers
+    NSDictionary *precedence_lookup;
 }
 
-
+- (id) init;
+- (BOOL) shuntingYardWithEquation:(NSMutableArray *) equation;
+- (void) initPrecendenceDict;
+- (NSNumber *) checkPrecedence:(NSString*) op;
+- (NSNumber *) Evaluate;
+- (NSNumber *) performShuntingYardComputationWithEquation:(NSMutableArray *) equation;
+- (void) clear;
 
 @end
 
