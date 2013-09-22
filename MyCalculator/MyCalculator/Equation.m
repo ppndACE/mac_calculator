@@ -18,10 +18,36 @@ BOOL was_precedence_init_called = FALSE;
 {
     output = [[Stack alloc] init];
     operators = [[Stack alloc] init];
+    equation = [NSMutableArray array];
+    //[self initPrecendenceDict];
     return self;
 }
 
-- (BOOL) shuntingYardWithEquation:(NSMutableArray *)equation
+- (void) reset
+{
+    [output removeAllObjects];
+    [operators removeAllObjects];
+    [equation removeAllObjects];
+}
+
+- (void) appendStringToEquation:(NSString *)str
+{
+    [equation addObject:str];
+}
+
+- (NSString *) popLastObject
+{
+    NSString *last = [equation lastObject];
+    [equation removeLastObject];
+    return last;
+}
+
+- (BOOL) shuntingYard
+{
+    return [self shuntingYardWithEquation:equation];
+}
+
+- (BOOL) shuntingYardWithEquation:(NSMutableArray *)eq
 {
     NSString *last_op;
     NSString *item;
@@ -31,18 +57,18 @@ BOOL was_precedence_init_called = FALSE;
     [nf setAllowsFloats:YES];
     
     // iterate in order through equation array of strings to separate numbers from operators
-    for (int i = 0; i < [equation count]; i++) {
+    for (int i = 0; i < [eq count]; i++) {
 
-        item = [equation objectAtIndex:i];
+        item = [eq objectAtIndex:i];
         
         // if string is a number
         if ([nf numberFromString:item]) {
             [output push:item];
         }
-        else if ([item isEqualToString:@")"]) { // if string is a closing bracket
+        else if ([item isEqualToString:CLOSE_BRACKET]) { // if string is a closing bracket
             
             // pop elements off operators and compute until "(" is encountered
-            while (! [(NSString*)[operators peek] isEqualToString:@"("]) {
+            while (! [(NSString*)[operators peek] isEqualToString:OPEN_BRACKET]) {
                 
                 last_op = (NSString*)[operators peek];
                 
@@ -86,18 +112,22 @@ BOOL was_precedence_init_called = FALSE;
         }
     }
     
+    // if successful, remove objects from equation because operators and output will be in appropriate locations
+    [equation removeAllObjects];
+    
     return TRUE;
 }
 
 - (void) initPrecendenceDict
 {
     NSArray *valid_operators = [NSArray arrayWithObjects:
-                                    @"+",
-                                    @"-",
-                                    @"/",
-                                    @"*",
-                                    @"^",
-                                    @"(",
+                                    PLUS,
+                                    MINUS,
+                                    DIV,
+                                    MULT,
+                                    POW,
+                                    OPEN_BRACKET,
+                                    ROOT,
                                 nil];
     
     NSArray *precedences = [NSArray arrayWithObjects:
@@ -106,6 +136,7 @@ BOOL was_precedence_init_called = FALSE;
                                     [NSNumber numberWithInt:2],
                                     [NSNumber numberWithInt:2],
                                     [NSNumber numberWithInt:3],
+                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
                                     [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
                                 nil];
     
@@ -138,6 +169,7 @@ BOOL was_precedence_init_called = FALSE;
 //TODO: check here for null numbers -- IMPORTANT
     
     // determines which operation to run according to operator popped
+    // unfortunately can't do a switch on NSStrings :(
     if ([op isEqualToString:PLUS]) {
         result = [NSNumber numberWithDouble:([first doubleValue] + [second doubleValue])];
     }
@@ -172,11 +204,16 @@ BOOL was_precedence_init_called = FALSE;
     return result;
 }
 
-- (NSNumber*) performShuntingYardComputationWithEquation:(NSMutableArray *)equation
+- (NSNumber*) performShuntingYardComputation
+{
+    return [self performShuntingYardComputationWithEquation:equation];
+}
+
+- (NSNumber*) performShuntingYardComputationWithEquation:(NSMutableArray *)eq
 {
     NSNumber *n;
     
-    if ([self shuntingYardWithEquation:equation]) {
+    if ([self shuntingYardWithEquation:eq]) {
         
         while ([output count] > 1) {
             n = [self Evaluate];
@@ -201,6 +238,18 @@ BOOL was_precedence_init_called = FALSE;
 {
     [output removeAllObjects];
     [operators removeAllObjects];
+}
+
+// will probably need to add a method that compares operator to a slew of function operators
+- (BOOL) doesOpOpenBracket:(NSString *)op
+{
+    if ([op isEqualToString:OPEN_BRACKET] ||
+        [op isEqualToString:ROOT]
+        ) {
+                return YES;
+    }
+    
+    return NO;
 }
 
 @end

@@ -17,11 +17,11 @@
     e = [[EquationStub alloc] init];
     
     eq_no_brackets = [NSMutableArray arrayWithObjects:@"1", @"+", @"2", @"*", @"8", nil];
-    eq_brackets = [NSMutableArray arrayWithObjects:@"3", @"*", @"(", @"2", @"+", @"4", @")", nil];
+    eq_brackets = [NSMutableArray arrayWithObjects:@"1", @"+", @"3", @"*", @"(", @"2", @"+", @"4", @")", @"^", @"2", nil];
     eq_mismatch_brackets = [NSMutableArray arrayWithObjects:@"3", @"*", @"2", @"+", @"4", @")", nil];
     
     res_no_brackets = [NSNumber numberWithDouble:(1 + 2 * 8)];
-    res_brackets = [NSNumber numberWithDouble:(3 * ( 2 + 4 ))];
+    res_brackets = [NSNumber numberWithDouble:(1 + 3 * pow(( 2 + 4 ), 2))];
     res_mismatch_brackets = nil;
 }
 
@@ -119,6 +119,29 @@
     
     STAssertEquals([[e popOutput] intValue], [[NSNumber numberWithInt:i4] intValue], @"Evaluate-->addmult fail");
 }
+
+//- (void) testEvaluateBrackets
+//{
+//    int i1 = 1;
+//    int i2 = 2;
+//    int i3 = 3;
+//    int i4 = 4;
+//    int i5 = i1 + i2 * (i3 + i4);
+//    
+//    [e pushOntoOutput:[NSNumber numberWithInt:i1]];
+//    [e pushOntoOperators:PLUS];
+//    [e pushOntoOutput:[NSNumber numberWithInt:i2]];
+//    [e pushOntoOperators:MULT];
+//    [e pushOntoOperators:@"("];
+//    [e pushOntoOutput:[NSNumber numberWithInt:i3]];
+//    [e pushOntoOperators:PLUS];
+//    [e pushOntoOutput:[NSNumber numberWithInt:i4]];
+//    [e pushOntoOperators:@")"];
+//    
+//    [e performShuntingYardComputation];
+//    
+//    STAssertEquals([[e popOutput] intValue], [[NSNumber numberWithInt:i5] intValue], @"Evaluate-->addmult fail");
+//}
 
 // test shuntingYardWithEquation method
 - (void) testShuntingYard

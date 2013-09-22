@@ -17,15 +17,22 @@
     Stack *operators; // stack to hold operators
     Stack *output; // stack of numbers
     NSDictionary *precedence_lookup;
+    NSMutableArray *equation;
 }
 
 - (id) init;
-- (BOOL) shuntingYardWithEquation:(NSMutableArray *) equation;
+- (void) reset;
+- (void) appendStringToEquation:(NSString *)str;
+- (NSString *) popLastObject;
+- (BOOL) shuntingYard;
+- (BOOL) shuntingYardWithEquation:(NSMutableArray *) eq;
 - (void) initPrecendenceDict;
 - (NSNumber *) checkPrecedence:(NSString*) op;
 - (NSNumber *) Evaluate;
-- (NSNumber *) performShuntingYardComputationWithEquation:(NSMutableArray *) equation;
+- (NSNumber *) performShuntingYardComputation;
+- (NSNumber *) performShuntingYardComputationWithEquation:(NSMutableArray *) eq;
 - (void) clear;
+- (BOOL) doesOpOpenBracket:(NSString *)op;
 
 @end
 
