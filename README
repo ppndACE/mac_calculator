@@ -22,4 +22,6 @@ UPDATE sept 17, 2013: Implemented a variation on the shunting yard algorithm to 
 Instead of using a simple string, I am inputting numbers and operators into an array, so that the equation class just reads numbers separate from operators. 
 I'm not sure if this simplified anything or not.
 
-UPDATE sept 22, 2013: Spent a good week on it during my free time, and I think most of the major functionality is there. 
+UPDATE sept 22, 2013: Spent a good week on it during my free time, and I think most of the major functionality is there.
+
+UPDATE sept 23, 2013: Finally uploaded to GitHub :)
