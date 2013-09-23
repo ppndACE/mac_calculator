@@ -1,16 +1,25 @@
-This project is a simple experiment with XCode and Objective-C for Mac OS X platform.
+This project is an experiment with XCode and Objective-C for Mac OS X platform.
 Features will be added at random if at all.
 UI inspiration taken from the windows calculator (of all things...) and the SHARP EL-520W.
 
 So much of this is just hacked together, especially the equations.
 - Need to find a better, more efficient way of storing and parsing these equations.
 
-TODO:
+FEATURES TODO:
 - check number then bracket functionality (eg. 1 + 2 ( 3 + 4 ))
 	- for this, maybe parse the equation array first to see if there are any numbers
 	  preceding a bracket (rather than an operator), and insert a @"*" operator there
+- unit test functions
+- switch in menu (or on calc) for degrees/radians (right now, only radians)
+- try to clean up some of the hacky stuff
+- maybe want to separate On_RegOp into On_RegOp and On_RegFunc
+- add support for deleting operators and getting back the last number
 
-
-UPDATE sept 14, 2013: Unfortunately, I haven't been able to put much work into finishing this project because I got sick during the second half of the semester.
+UPDATE sept 14, 2013: Unfortunately, I haven't been able to put much work into finishing this project because I got sick during the second half of the summer.
 On top of work and school starting up, I regretfully am only starting to work on it again now.
 
+UPDATE sept 17, 2013: Implemented a variation on the shunting yard algorithm to parse the equation.
+Instead of using a simple string, I am inputting numbers and operators into an array, so that the equation class just reads numbers separate from operators. 
+I'm not sure if this simplified anything or not.
+
+UPDATE sept 22, 2013: Spent a good week on it during my free time, and I think most of the major functionality is there. 

@@ -1,2 +1,6 @@
 *.DS_Store
-
+MyCalculator/DerivedData*
+MyCalculator/Build*
+MyCalculator/build*
+MyCalculator/MyCalculator.xcodeproj/xcuserdata*
+MyCalculator/MyCalculator.xcodeproj/project.xcworkspace*

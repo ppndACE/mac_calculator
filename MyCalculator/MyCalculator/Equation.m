@@ -12,10 +12,11 @@
 
 @implementation Equation
 
-BOOL was_precedence_init_called = FALSE;
-
 - (id) init
 {
+    bracket_level = 0;
+    was_precedence_init_called = NO;
+    
     output = [[Stack alloc] init];
     operators = [[Stack alloc] init];
     equation = [NSMutableArray array];
@@ -25,6 +26,8 @@ BOOL was_precedence_init_called = FALSE;
 
 - (void) reset
 {
+    bracket_level = 0;
+    
     [output removeAllObjects];
     [operators removeAllObjects];
     [equation removeAllObjects];
@@ -67,8 +70,10 @@ BOOL was_precedence_init_called = FALSE;
         }
         else if ([item isEqualToString:CLOSE_BRACKET]) { // if string is a closing bracket
             
+            bracket_level--;
+            
             // pop elements off operators and compute until "(" is encountered
-            while (! [(NSString*)[operators peek] isEqualToString:OPEN_BRACKET]) {
+            while (! [[self class] doesOpOpenBracket:(NSString*) [operators peek]]) {//! [(NSString*)[operators peek] isEqualToString:OPEN_BRACKET]) {
                 
                 last_op = (NSString*)[operators peek];
                 
@@ -81,7 +86,13 @@ BOOL was_precedence_init_called = FALSE;
             }
             
             // pop off @"(", because expression inside brackets should have been computed by now
-            [operators pop];
+            // update: since all functions are considered as open brackets, check to determine whether we need
+            // to compute anything extra, or if the operator is a simple open bracket
+            NSString *temp_op = (NSString*)[operators pop];
+            if (![temp_op isEqualToString:OPEN_BRACKET]) {
+                [self EvaluateFunction:temp_op];
+            }
+            // else, the operator is a simple close bracket, and no further computation is necessary
         }
         else { // if string is another operator
             
@@ -90,6 +101,11 @@ BOOL was_precedence_init_called = FALSE;
             }
             
             NSNumber *current = [self checkPrecedence:item];
+            
+            if ([current intValue] == OPEN_BRACKET_PRECEDENCE) {
+                bracket_level++;
+            }
+            
             NSNumber *top_stack;
             
             // first elem here in while loop is the top item of the stack
@@ -115,7 +131,10 @@ BOOL was_precedence_init_called = FALSE;
     // if successful, remove objects from equation because operators and output will be in appropriate locations
     [equation removeAllObjects];
     
-    return TRUE;
+    if (bracket_level == 0) {
+        return TRUE;
+    }
+    else return FALSE;
 }
 
 - (void) initPrecendenceDict
@@ -128,6 +147,12 @@ BOOL was_precedence_init_called = FALSE;
                                     POW,
                                     OPEN_BRACKET,
                                     ROOT,
+                                    SIN,
+                                    COS,
+                                    TAN,
+                                    LOG,
+                                    LN,
+                                    E_POW,
                                 nil];
     
     NSArray *precedences = [NSArray arrayWithObjects:
@@ -136,6 +161,12 @@ BOOL was_precedence_init_called = FALSE;
                                     [NSNumber numberWithInt:2],
                                     [NSNumber numberWithInt:2],
                                     [NSNumber numberWithInt:3],
+                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
                                     [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
                                     [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
                                 nil];
@@ -191,7 +222,7 @@ BOOL was_precedence_init_called = FALSE;
     else if ([op isEqualToString:POW]) {
         result = [NSNumber numberWithDouble:pow([first doubleValue], [second doubleValue])];
     }
-    else { // this case should never happen unless the operator is an unmatched open bracket @"("
+    else { // this case should never happen unless the operator is an unmatched open bracket @"(" or function
         result = nil;
     }
     
@@ -201,6 +232,48 @@ BOOL was_precedence_init_called = FALSE;
     }
     
     /* return the evaluated operation as an NSNumber */
+    return result;
+}
+
+- (NSNumber*) EvaluateFunction:(NSString*)func
+{
+    NSNumber *result = nil;
+    NSNumber *num = (NSNumber*)[output pop];
+    
+    // check for NULL number
+    if (num == nil) {
+        return FALSE;
+    }
+    
+    if ([func isEqualToString:ROOT]) {
+        result = [NSNumber numberWithDouble:sqrt([num doubleValue])];
+    }
+    else if ([func isEqualToString:SIN]) {
+        result = [NSNumber numberWithDouble:sin([num doubleValue])];
+    }
+    else if ([func isEqualToString:COS]) {
+        result = [NSNumber numberWithDouble:cos([num doubleValue])];
+    }
+    else if ([func isEqualToString:TAN]) {
+        result = [NSNumber numberWithDouble:tan([num doubleValue])];
+    }
+    else if ([func isEqualToString:LOG]) {
+        result = [NSNumber numberWithDouble:log10([num doubleValue])];
+    }
+    else if ([func isEqualToString:LN]) {
+        result = [NSNumber numberWithDouble:log([num doubleValue])];
+    }
+    else if ([func isEqualToString:E_POW]) {
+        result = [NSNumber numberWithDouble:pow(M_E, [num doubleValue])];
+    }
+    else { //case should never happen
+        result = nil;
+    }
+    
+    if (result) {
+        [output push:result];
+    }
+    
     return result;
 }
 
@@ -241,10 +314,16 @@ BOOL was_precedence_init_called = FALSE;
 }
 
 // will probably need to add a method that compares operator to a slew of function operators
-- (BOOL) doesOpOpenBracket:(NSString *)op
++ (BOOL) doesOpOpenBracket:(NSString *)op
 {
-    if ([op isEqualToString:OPEN_BRACKET] ||
-        [op isEqualToString:ROOT]
+    if ([op isEqualToString:OPEN_BRACKET]   ||
+        [op isEqualToString:ROOT]           ||
+        [op isEqualToString:SIN]            ||
+        [op isEqualToString:COS]            ||
+        [op isEqualToString:TAN]            ||
+        [op isEqualToString:LOG]            ||
+        [op isEqualToString:LN]             ||
+        [op isEqualToString:E_POW]
         ) {
                 return YES;
     }

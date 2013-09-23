@@ -47,6 +47,7 @@
     decimal_placed = NO;
     close_bracket_equals = NO;
     was_last_close_bracket = NO;
+    div_zero_flag = NO;
     
     [e reset];
 }
@@ -65,6 +66,7 @@
     decimal_placed = NO;
     close_bracket_equals = NO;
     was_last_close_bracket = NO;
+    div_zero_flag = NO;
     
     [e reset];
 }
@@ -80,10 +82,12 @@
 
 //-----------------------------------------------------
 // Method called when delete button is pressed
-// -- on delete key press, delete last character inputted
+// -- on delete key press, delete last number inputted
 //-----------------------------------------------------
 - (IBAction) On_Delete:(id)sender
 {
+    // the way this calculator is set up, the user cannot delete an operator, or a number
+    // if equals has just been pressed
     if (equals_was_last_called || operator_called) {
         return;
     }
@@ -93,16 +97,14 @@
         return;
     }
     
+    // check that length is valid for removing 1 element
     if (len > 0) {
         [equation setStringValue:[[equation stringValue] substringToIndex:[[equation stringValue] length] - 1]];
     }
-//    else {
-//        [equation setStringValue:@""];
-//    }
     
     if ([current_value length] == 1) {
         [self UpdateCurrentValueWithString:[current_value substringToIndex:[current_value length] - 1]];
-        [answer_box setStringValue:@"0"];
+        [answer_box setStringValue:ZERO];
     }
     else if ([current_value length] > 0) {
         [self UpdateCurrentValueWithString:[current_value substringToIndex:[current_value length] - 1]];
@@ -115,9 +117,7 @@
 //-----------------------------------------------------
 - (IBAction) On_0:(id)sender
 {
-    NSString *num = ZERO;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:ZERO];
 }
 
 //-----------------------------------------------------
@@ -125,9 +125,7 @@
 //-----------------------------------------------------
 - (IBAction) On_1:(id)sender
 {
-    NSString *num = ONE;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:ONE];
 }
 
 //-----------------------------------------------------
@@ -135,9 +133,7 @@
 //-----------------------------------------------------
 - (IBAction) On_2:(id)sender
 {
-    NSString *num = TWO;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:TWO];
 }
 
 //-----------------------------------------------------
@@ -145,9 +141,7 @@
 //-----------------------------------------------------
 - (IBAction) On_3:(id)sender
 {
-    NSString *num = THREE;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:THREE];
 }
 
 //-----------------------------------------------------
@@ -155,9 +149,7 @@
 //-----------------------------------------------------
 - (IBAction) On_4:(id)sender
 {
-    NSString *num = FOUR;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:FOUR];
 }
 
 //-----------------------------------------------------
@@ -165,9 +157,7 @@
 //-----------------------------------------------------
 - (IBAction) On_5:(id)sender
 {
-    NSString *num = FIVE;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:FIVE];
 }
 
 //-----------------------------------------------------
@@ -175,9 +165,7 @@
 //-----------------------------------------------------
 - (IBAction) On_6:(id)sender
 {
-    NSString *num = SIX;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:SIX];
 }
 
 //-----------------------------------------------------
@@ -185,9 +173,7 @@
 //-----------------------------------------------------
 - (IBAction) On_7:(id)sender
 {
-    NSString *num = SEVEN;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:SEVEN];
 }
 
 //-----------------------------------------------------
@@ -195,9 +181,7 @@
 //-----------------------------------------------------
 - (IBAction) On_8:(id)sender
 {
-    NSString *num = EIGHT;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:EIGHT];
 }
 
 //-----------------------------------------------------
@@ -205,9 +189,7 @@
 //-----------------------------------------------------
 - (IBAction) On_9:(id)sender
 {
-    NSString *num = NINE;
-    
-    [self On_RegNum:num];
+    [self On_RegNum:NINE];
 }
 
 //-----------------------------------------------------
@@ -216,8 +198,7 @@
 - (IBAction) On_Decimal:(id)sender
 {
     if (!decimal_placed) {
-        NSString *num = @".";
-        [self On_RegNum:num];
+        [self On_RegNum:DEC];
         decimal_placed = YES;
     }
 }
@@ -243,7 +224,7 @@
 //-----------------------------------------------------
 - (IBAction)On_Sin:(id)sender
 {
-    
+    [self On_RegOp:SIN];
 }
 
 //-----------------------------------------------------
@@ -251,7 +232,7 @@
 //-----------------------------------------------------
 - (IBAction)On_Cos:(id)sender
 {
-    
+    [self On_RegOp:COS];
 }
 
 //-----------------------------------------------------
@@ -259,7 +240,7 @@
 //-----------------------------------------------------
 - (IBAction)On_Tan:(id)sender
 {
-    
+    [self On_RegOp:TAN];
 }
 
 //-----------------------------------------------------
@@ -267,7 +248,7 @@
 //-----------------------------------------------------
 - (IBAction)On_Log:(id)sender
 {
-    
+    [self On_RegOp:LOG];
 }
 
 //-----------------------------------------------------
@@ -275,7 +256,7 @@
 //-----------------------------------------------------
 - (IBAction)On_Ln:(id)sender
 {
-    
+    [self On_RegOp:LN];
 }
 
 //-----------------------------------------------------
@@ -283,7 +264,7 @@
 //-----------------------------------------------------
 - (IBAction)On_Root:(id)sender
 {
-    //[self On_RegOp:@"√"];
+    [self On_RegOp:ROOT];
 }
 
 //-----------------------------------------------------
@@ -291,7 +272,7 @@
 //-----------------------------------------------------
 - (IBAction)On_E:(id)sender
 {
-    
+    [self On_RegOp:E_POW];
 }
 
 //-----------------------------------------------------
@@ -365,26 +346,40 @@
         close_bracket_equals = NO;
     }
     
-    if (equals_was_last_called) {
+    // want a regular operator to continue the equation
+    if (equals_was_last_called && !div_zero_flag) {
+        
+        // however, if the operator is a function or bracket, 
+        if ([Equation doesOpOpenBracket:op]) {
+            [self UpdateCurrentValueWithString:@""];
+        }
+        
         [equation setStringValue:current_value];
     }
+    
+    div_zero_flag = NO;
     
     equals_was_last_called = NO;
     
     /* add preceding number to equation string */
     
-    if (![op isEqualToString:@"("] && !was_last_close_bracket) {
+    if (![Equation doesOpOpenBracket:op] && !was_last_close_bracket) {
         
 //        if ([current_value isEqualToString:@""]) {
 //            [self On_RegNum:@"0"];
 //        }
         
-        [e appendStringToEquation:[NSString stringWithString:current_value]];
-        
+        if (![current_value isEqualToString:@""]) {
+            [e appendStringToEquation:[NSString stringWithString:current_value]];
+        }
+        else { // is there a better way to do this. the other if doesn't work.
+            [e appendStringToEquation:ZERO];
+            [equation setStringValue:ZERO];
+        }
     }
     
     [self UpdateCurrentValueWithString:@""];
-    [answer_box setStringValue:@"0"];
+    [answer_box setStringValue:ZERO];
     
     /* write the operator to the equation line */
     [equation setStringValue:[[equation stringValue] stringByAppendingString:op]];
@@ -395,13 +390,12 @@
     if (!close_bracket_equals) {
         was_last_close_bracket = NO;
     }
-    if ([op isEqualToString:@")"]) {
+    if ([op isEqualToString:CLOSE_BRACKET]) {
         was_last_close_bracket = YES;
     }
     
     /* add current operator to the operators array */
     [e appendStringToEquation:op];
-
 }
 
 //-----------------------------------------------------
@@ -415,6 +409,7 @@
         
         // this will put the last item into the equation. if 
         if (!close_bracket_equals) {
+            
             // add current_value to eq array
             [e appendStringToEquation:current_value];
         }
@@ -423,42 +418,27 @@
         
         NSNumber *result = [e performShuntingYardComputation];
         
-        [self UpdateCurrentValueWithString:[result stringValue]];
+        // check to see if result is not nil, otherwise catch and display error.
+        if (result) {
+            [self UpdateCurrentValueWithString:[result stringValue]];
+        }
+        else {
+            [self resetAll];
+            [self WriteToAnswerBox:ERROR_STRING];
+            div_zero_flag = YES;
+        }
         
         was_last_close_bracket = NO;
     }
 }
 
 //-----------------------------------------------------
-// Logic for appending a value to the answer box
+// Sets the string displayed in the answer box to the
+// NSString specified by str
 //-----------------------------------------------------
-- (void) WriteToAnswerBox:(NSString *)i
+- (void) WriteToAnswerBox:(NSString *)str
 {
-//    if ([[answer_box stringValue] isEqualToString:@"0"]) { /* if value is 0, replace it, otherwise append */
-//        [answer_box setStringValue:i];
-//    }
-//    else { /* includes case where decimal has been placed */
-//        
-//        if (equals_was_last_called) {
-//            [self resetAll];
-//            [self On_RegNum:i];
-//            [answer_box setStringValue:i];
-//        }
-//        else {
-//            [answer_box setStringValue:[[answer_box stringValue] stringByAppendingString:i]];
-//        }
-//    }
-//    
-//    NSString *answer = [answer_box stringValue];
-//    
-//    if (equals_was_last_called){
-//        [self resetExceptForAnswerBox];
-//        //equals_was_last_called = NO;
-//    }
-//
-//    return answer;
-    
-    [answer_box setStringValue:current_value];
+    [answer_box setStringValue:str];
 }
 
 //-----------------------------------------------------
@@ -469,7 +449,7 @@
     if ([s isEqualToString:@"."] && [current_value isEqualToString:@""]) {
         [self UpdateCurrentValueWithString:@"0."];
     }
-    else if (! [current_value isEqualToString:@"0"]) {
+    else if (! [current_value isEqualToString:ZERO]) {
         [current_value appendString:s];
     }
     else { // current_value == 0

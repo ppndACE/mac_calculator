@@ -12,7 +12,7 @@
 
 @implementation Stack
 
-- (Stack*) init
+- (Stack *) init
 {
     _stack = [NSMutableArray array];
     return [super init];
@@ -30,7 +30,7 @@
 }
 
 // method returns TRUE when there are no elements stored in the stack
-- (BOOL)isEmpty
+- (BOOL) isEmpty
 {
     // check to see whether there are 0 elements stored in the array
     if ([self count] <= 0) {
@@ -41,7 +41,7 @@
 }
 
 // method pops off last object in the stack
-- (NSObject*)pop
+- (NSObject *) pop
 {
     if ([self isEmpty]) {
         return nil;
@@ -55,12 +55,12 @@
 }
 
 // method pushes new object onto the stack
-- (void)push:(NSObject*)item
+- (void) push:(NSObject *)item
 {
     [_stack addObject:item];
 }
 
-- (NSObject*)peek
+- (NSObject *) peek
 {
     return [_stack lastObject];
 }

@@ -14,6 +14,9 @@
 
 @interface Equation : NSObject
 {
+    int bracket_level;
+    BOOL was_precedence_init_called;
+    
     Stack *operators; // stack to hold operators
     Stack *output; // stack of numbers
     NSDictionary *precedence_lookup;
@@ -29,10 +32,12 @@
 - (void) initPrecendenceDict;
 - (NSNumber *) checkPrecedence:(NSString*) op;
 - (NSNumber *) Evaluate;
+- (NSNumber *) EvaluateFunction:(NSString*)func;
 - (NSNumber *) performShuntingYardComputation;
 - (NSNumber *) performShuntingYardComputationWithEquation:(NSMutableArray *) eq;
 - (void) clear;
-- (BOOL) doesOpOpenBracket:(NSString *)op;
+
++ (BOOL) doesOpOpenBracket:(NSString *)op;
 
 @end
 

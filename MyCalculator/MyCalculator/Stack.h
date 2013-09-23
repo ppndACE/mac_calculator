@@ -20,9 +20,9 @@
 
 - (NSUInteger) count;
 - (BOOL) isEmpty;
-- (NSObject*) pop;
-- (void) push:(NSObject*)item;
-- (NSObject*) peek;
+- (NSObject *) pop;
+- (void) push:(NSObject *)item;
+- (NSObject *) peek;
 - (void) removeAllObjects;
 
 @end

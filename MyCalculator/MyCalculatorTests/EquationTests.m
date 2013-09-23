@@ -120,29 +120,6 @@
     STAssertEquals([[e popOutput] intValue], [[NSNumber numberWithInt:i4] intValue], @"Evaluate-->addmult fail");
 }
 
-//- (void) testEvaluateBrackets
-//{
-//    int i1 = 1;
-//    int i2 = 2;
-//    int i3 = 3;
-//    int i4 = 4;
-//    int i5 = i1 + i2 * (i3 + i4);
-//    
-//    [e pushOntoOutput:[NSNumber numberWithInt:i1]];
-//    [e pushOntoOperators:PLUS];
-//    [e pushOntoOutput:[NSNumber numberWithInt:i2]];
-//    [e pushOntoOperators:MULT];
-//    [e pushOntoOperators:@"("];
-//    [e pushOntoOutput:[NSNumber numberWithInt:i3]];
-//    [e pushOntoOperators:PLUS];
-//    [e pushOntoOutput:[NSNumber numberWithInt:i4]];
-//    [e pushOntoOperators:@")"];
-//    
-//    [e performShuntingYardComputation];
-//    
-//    STAssertEquals([[e popOutput] intValue], [[NSNumber numberWithInt:i5] intValue], @"Evaluate-->addmult fail");
-//}
-
 // test shuntingYardWithEquation method
 - (void) testShuntingYard
 {

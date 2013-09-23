@@ -15,6 +15,12 @@
 #define OPEN_BRACKET @"("
 #define CLOSE_BRACKET @")"
 #define ROOT @"√("
+#define SIN @"sin("
+#define COS @"cos("
+#define TAN @"tan("
+#define LOG @"log("
+#define LN @"ln("
+#define E_POW @"e^("
 
 #define ZERO @"0"
 #define ONE @"1"
@@ -26,4 +32,6 @@
 #define SEVEN @"7"
 #define EIGHT @"8"
 #define NINE @"9"
+#define DEC @"."
 
+#define ERROR_STRING @"err."
