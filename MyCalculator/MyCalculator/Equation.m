@@ -16,6 +16,8 @@
 {
     bracket_level = 0;
     was_precedence_init_called = NO;
+    isRadians = YES;
+    isDegrees = NO;
     
     output = [[Stack alloc] init];
     operators = [[Stack alloc] init];
@@ -240,41 +242,74 @@
     NSNumber *result = nil;
     NSNumber *num = (NSNumber*)[output pop];
     
+    double d_num = [num doubleValue];
+    
     // check for NULL number
     if (num == nil) {
-        return FALSE;
+        return nil;
     }
     
+    // check for degrees and radians being set to same value
+    if ((isDegrees && isRadians) || (!isDegrees && !isRadians)) {
+        return nil;
+    }
+//    else if (isDegrees) {
+//
+//        // else if degrees, we need to convert to radians
+//        d_num = [self convertDegreesToRadians:d_num];
+//    }
+    
     if ([func isEqualToString:ROOT]) {
-        result = [NSNumber numberWithDouble:sqrt([num doubleValue])];
+        result = [NSNumber numberWithDouble:sqrt(d_num)];
     }
     else if ([func isEqualToString:SIN]) {
-        result = [NSNumber numberWithDouble:sin([num doubleValue])];
+        
+        if (isDegrees) {
+            d_num = [self convertDegreesToRadians:d_num];
+        }
+        
+        result = [NSNumber numberWithDouble:sin(d_num)];
     }
     else if ([func isEqualToString:COS]) {
-        result = [NSNumber numberWithDouble:cos([num doubleValue])];
+        
+        if (isDegrees) {
+            d_num = [self convertDegreesToRadians:d_num];
+        }
+        
+        result = [NSNumber numberWithDouble:cos(d_num)];
     }
     else if ([func isEqualToString:TAN]) {
-        result = [NSNumber numberWithDouble:tan([num doubleValue])];
+        
+        if (isDegrees) {
+            d_num = [self convertDegreesToRadians:d_num];
+        }
+        
+        result = [NSNumber numberWithDouble:tan(d_num)];
     }
     else if ([func isEqualToString:LOG]) {
-        result = [NSNumber numberWithDouble:log10([num doubleValue])];
+        result = [NSNumber numberWithDouble:log10(d_num)];
     }
     else if ([func isEqualToString:LN]) {
-        result = [NSNumber numberWithDouble:log([num doubleValue])];
+        result = [NSNumber numberWithDouble:log(d_num)];
     }
     else if ([func isEqualToString:E_POW]) {
-        result = [NSNumber numberWithDouble:pow(M_E, [num doubleValue])];
+        result = [NSNumber numberWithDouble:pow(M_E, d_num)];
     }
     else { //case should never happen
         result = nil;
     }
     
+    // push result back onto output stack
     if (result) {
         [output push:result];
     }
     
     return result;
+}
+
+- (double) convertDegreesToRadians:(double)num
+{
+    return num * M_PI / 180;
 }
 
 - (NSNumber*) performShuntingYardComputation
@@ -311,6 +346,18 @@
 {
     [output removeAllObjects];
     [operators removeAllObjects];
+}
+
+- (void) setRadians
+{
+    isRadians = YES;
+    isDegrees = NO;
+}
+
+- (void) setDegrees
+{
+    isRadians = NO;
+    isDegrees = YES;
 }
 
 // will probably need to add a method that compares operator to a slew of function operators

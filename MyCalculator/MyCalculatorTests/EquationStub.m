@@ -15,6 +15,16 @@
     return precedence_lookup;
 }
 
+- (BOOL) getIsRadians
+{
+    return isRadians;
+}
+
+- (BOOL) getIsDegrees
+{
+    return isDegrees;
+}
+
 - (void) pushOntoOutput:(NSNumber*)num
 {
     [output push:num];

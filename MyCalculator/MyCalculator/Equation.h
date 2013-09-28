@@ -16,6 +16,8 @@
 {
     int bracket_level;
     BOOL was_precedence_init_called;
+    BOOL isRadians;
+    BOOL isDegrees;
     
     Stack *operators; // stack to hold operators
     Stack *output; // stack of numbers
@@ -36,6 +38,8 @@
 - (NSNumber *) performShuntingYardComputation;
 - (NSNumber *) performShuntingYardComputationWithEquation:(NSMutableArray *) eq;
 - (void) clear;
+- (void) setRadians;
+- (void) setDegrees;
 
 + (BOOL) doesOpOpenBracket:(NSString *)op;
 

@@ -11,6 +11,8 @@
 @interface EquationStub : Equation
 
 - (NSDictionary*)getPrecedenceDict;
+- (BOOL) getIsRadians;
+- (BOOL) getIsDegrees;
 - (void) pushOntoOutput:(NSNumber*)num;
 - (NSNumber*) popOutput;
 - (void) pushOntoOperators:(NSString*)op;

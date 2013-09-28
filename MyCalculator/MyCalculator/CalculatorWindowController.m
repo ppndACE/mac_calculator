@@ -11,6 +11,7 @@
 @implementation CalculatorWindowController
 @synthesize answer_box;
 @synthesize equation;
+@synthesize matrix_degrad;
 
 //-----------------------------------------------------
 // Override init
@@ -110,6 +111,23 @@
         [self UpdateCurrentValueWithString:[current_value substringToIndex:[current_value length] - 1]];
     }
     // else do nothing
+}
+
+//-----------------------------------------------------
+// Method called when value in matrix is switched
+//-----------------------------------------------------
+- (IBAction)On_Matrix:(id)sender
+{
+    // if Tag == 0, degrees
+    // if Tag == 1, radians
+    
+    if ([matrix_degrad selectedTag] == 0) {
+        [e setDegrees];
+    }
+    else {
+        [e setRadians];
+    }
+    
 }
 
 //-----------------------------------------------------

@@ -16,6 +16,8 @@
     [super setUp];
     e = [[EquationStub alloc] init];
     
+    lambda = 0.0000001;
+    
     eq_no_brackets = [NSMutableArray arrayWithObjects:@"1", @"+", @"2", @"*", @"8", nil];
     eq_brackets = [NSMutableArray arrayWithObjects:@"1", @"+", @"3", @"*", @"(", @"2", @"+", @"4", @")", @"^", @"2", nil];
     eq_mismatch_brackets = [NSMutableArray arrayWithObjects:@"3", @"*", @"2", @"+", @"4", @")", nil];
@@ -23,6 +25,33 @@
     res_no_brackets = [NSNumber numberWithDouble:(1 + 2 * 8)];
     res_brackets = [NSNumber numberWithDouble:(1 + 3 * pow(( 2 + 4 ), 2))];
     res_mismatch_brackets = nil;
+}
+
+// tests setDegrees and setRadians methods
+- (void) testSetDegreesAndRadians
+{
+    // initially
+    BOOL b = [e getIsRadians];
+    BOOL c = [e getIsDegrees];
+    
+    STAssertTrue(b, @"initially, radians set improperly");
+    STAssertFalse(c, @"initially, degrees set improperly");
+    
+    [e setDegrees];
+    
+    b = [e getIsRadians];
+    c = [e getIsDegrees];
+    
+    STAssertFalse(b, @"after setDegrees, radians set improperly");
+    STAssertTrue(c, @"after setDegrees, degrees set improperly");
+    
+    [e setRadians];
+    
+    b = [e getIsRadians];
+    c = [e getIsDegrees];
+    
+    STAssertTrue(b, @"after setRadians, radians set improperly");
+    STAssertFalse(c, @"after setRadians, degrees set improperly");
 }
 
 // tests initPrecedenceDict method
@@ -117,7 +146,35 @@
     [e Evaluate];
     [e Evaluate];
     
-    STAssertEquals([[e popOutput] intValue], [[NSNumber numberWithInt:i4] intValue], @"Evaluate-->addmult fail");
+    STAssertEquals([[e popOutput] intValue], i4, @"Evaluate-->addmult fail");
+}
+
+// tests shuntingYard algorithm with sin
+- (void) testEvaluateFuncSin
+{
+    double pi_2 = M_PI / 2;
+    double ans = sin(pi_2);
+    
+    STAssertTrue([e getIsRadians], @"not radians");
+    
+    [e pushOntoOutput:[NSNumber numberWithDouble:pi_2]];
+    NSNumber *n_ret = [e EvaluateFunction:SIN];
+    
+    STAssertEqualsWithAccuracy(ans, [n_ret doubleValue], lambda, @"shunting yard sin error");
+    
+    [e setDegrees];
+    
+    STAssertTrue([e getIsDegrees], @"not degrees");
+    
+    [e pushOntoOutput:[NSNumber numberWithDouble:180]];
+    NSNumber *n_ret2 = [e EvaluateFunction:SIN];
+    
+    STAssertEqualsWithAccuracy(0.0, [n_ret2 doubleValue], lambda, @"shunting yard sin error");
+    
+    [e pushOntoOutput:[NSNumber numberWithDouble:-90]];
+    NSNumber *n_ret3 = [e EvaluateFunction:SIN];
+    
+    STAssertEqualsWithAccuracy(-1.0, [n_ret3 doubleValue], lambda, @"shunting yard sin error");
 }
 
 // test shuntingYardWithEquation method

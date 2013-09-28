@@ -13,6 +13,8 @@
 {
     EquationStub *e;
     
+    double lambda;
+    
     NSMutableArray *eq_no_brackets;
     NSMutableArray *eq_brackets;
     NSMutableArray *eq_mismatch_brackets;

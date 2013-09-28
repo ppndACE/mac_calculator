@@ -29,12 +29,14 @@
 
 @property (weak) IBOutlet NSTextField *answer_box;
 @property (weak) IBOutlet NSTextField *equation;
+@property (weak) IBOutlet NSMatrix *matrix_degrad;
 
 - (id) init;
 - (void) windowDidLoad;
 
 - (IBAction) On_Clear:(id)sender;
 - (IBAction) On_Delete:(id)sender;
+- (IBAction) On_Matrix:(id)sender;
 
 /********************* Numbers *********************/
 
