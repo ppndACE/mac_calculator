@@ -10,11 +10,14 @@
 
 @interface EquationStub : Equation
 
+- (void) reset;
 - (NSDictionary*)getPrecedenceDict;
 - (BOOL) getIsRadians;
 - (BOOL) getIsDegrees;
 - (void) pushOntoOutput:(NSNumber*)num;
 - (NSNumber*) popOutput;
 - (void) pushOntoOperators:(NSString*)op;
+- (int) getBracketLevel;
+- (void) setBracketLevel:(int)num;
 
 @end

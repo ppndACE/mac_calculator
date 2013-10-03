@@ -21,10 +21,22 @@
     eq_no_brackets = [NSMutableArray arrayWithObjects:@"1", @"+", @"2", @"*", @"8", nil];
     eq_brackets = [NSMutableArray arrayWithObjects:@"1", @"+", @"3", @"*", @"(", @"2", @"+", @"4", @")", @"^", @"2", nil];
     eq_mismatch_brackets = [NSMutableArray arrayWithObjects:@"3", @"*", @"2", @"+", @"4", @")", nil];
+    eq_start_function = [NSMutableArray arrayWithObjects:@"cos(", @"0", @")", nil];
+    eq_times_function = [NSMutableArray arrayWithObjects:@"5", @"+", @"4", @"cos(", @"0", @")", nil];
+    eq_double_op = [NSMutableArray arrayWithObjects:@"1", @"+", @"+", @"3", nil];
     
     res_no_brackets = [NSNumber numberWithDouble:(1 + 2 * 8)];
     res_brackets = [NSNumber numberWithDouble:(1 + 3 * pow(( 2 + 4 ), 2))];
     res_mismatch_brackets = nil;
+    res_start_function = [NSNumber numberWithDouble:(cos(0))];
+    res_times_function = [NSNumber numberWithDouble:(5 + 4 * cos(0))];
+    res_double_op = nil;
+}
+
+- (void) tearDown
+{
+    [super tearDown];
+    [e reset];
 }
 
 // tests setDegrees and setRadians methods
@@ -55,14 +67,12 @@
 }
 
 // tests initPrecedenceDict method
-- (void) testInitPrecedenceDict
+- (void) testInit
 {
-    STAssertNil([e getPrecedenceDict], @"precedence dictionary is not nil on startup");
-    [e initPrecendenceDict];
-    
-    NSDictionary *d = [e getPrecedenceDict];
-
-    STAssertNotNil(d, @"precedence dictionary was not initted properly");
+    STAssertNotNil([e getPrecedenceDict], @"precedence dictionary is nil on startup");
+    STAssertEquals(0, [e getBracketLevel], @"improper bracket level");
+    STAssertTrue([e getIsRadians], @"radians not set");
+    STAssertFalse([e getIsDegrees], @"degrees set");
 }
 
 // tests Evaluate method with adding ints
@@ -182,26 +192,49 @@
 {
     BOOL b = [e shuntingYardWithEquation:eq_no_brackets];
     STAssertTrue(b, @"shunting yard error");
+    [e reset];
     
     b = [e shuntingYardWithEquation:eq_brackets];
     STAssertTrue(b, @"shunting yard error");
+    [e reset];
     
     // this case should purposely be false because the eq has mismatched @")"
     b = [e shuntingYardWithEquation:eq_mismatch_brackets];
     STAssertFalse(b, @"unmatched bracket shunting yard no fail");
+    [e reset];
+    
+    b = [e shuntingYardWithEquation:eq_start_function];
+    STAssertTrue(b, @"eq starting with function shunting yard error");
+    [e reset];
 }
 
 // tests performShuntingYardComputationWithEquation method
 - (void) testPerformShuntingYard
 {
-    NSNumber *result = [e performShuntingYardComputationWithEquation:eq_no_brackets];
+    NSNumber *result;
+    
+    result = [e performShuntingYardComputationWithEquation:eq_no_brackets];
     STAssertEqualObjects(result, res_no_brackets, @"no brackets results don't match");
+    [e reset];
     
     result = [e performShuntingYardComputationWithEquation:eq_brackets];
     STAssertEqualObjects(result, res_brackets, @"brackets results don't match");
+    [e reset];
     
     result = [e performShuntingYardComputationWithEquation:eq_mismatch_brackets];
     STAssertEqualObjects(result, res_mismatch_brackets, @"mismatched not nil");
+    [e reset];
+    
+    result = [e performShuntingYardComputationWithEquation:eq_start_function];
+    STAssertEqualObjects(result, res_start_function, @"eq starting with func, broken");
+    [e reset];
+    
+    result = [e performShuntingYardComputationWithEquation:eq_times_function];
+    STAssertEqualObjects(result, res_times_function, @"eq times func broken");
+    [e reset];
+    
+//    result = [e performShuntingYardComputationWithEquation:eq_double_op];
+//    STAssertEqualObjects(result, res_double_op, @"eq double op broken");
 }
 
 

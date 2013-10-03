@@ -15,7 +15,6 @@
 @interface Equation : NSObject
 {
     int bracket_level;
-    BOOL was_precedence_init_called;
     BOOL isRadians;
     BOOL isDegrees;
     
@@ -27,21 +26,22 @@
 
 - (id) init;
 - (void) reset;
+- (void) setRadians;
+- (void) setDegrees;
 - (void) appendStringToEquation:(NSString *)str;
 - (NSString *) popLastObject;
 - (BOOL) shuntingYard;
 - (BOOL) shuntingYardWithEquation:(NSMutableArray *) eq;
-- (void) initPrecendenceDict;
 - (NSNumber *) checkPrecedence:(NSString*) op;
 - (NSNumber *) Evaluate;
 - (NSNumber *) EvaluateFunction:(NSString*)func;
+- (NSNumber*) EvaluateTrigFunction:(NSString*)func withNumber:(double)d_num;
 - (NSNumber *) performShuntingYardComputation;
 - (NSNumber *) performShuntingYardComputationWithEquation:(NSMutableArray *) eq;
-- (void) clear;
-- (void) setRadians;
-- (void) setDegrees;
 
 + (BOOL) doesOpOpenBracket:(NSString *)op;
++ (BOOL) isOperator:(NSString *)s;
++ (BOOL) isTrigFunction:(NSString*)func;
 
 @end
 

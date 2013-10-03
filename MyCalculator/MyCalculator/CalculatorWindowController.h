@@ -20,9 +20,7 @@
     BOOL operator_called;
     BOOL equals_was_last_called;
     BOOL decimal_placed;
-    BOOL close_bracket_equals;
     BOOL was_last_close_bracket;
-    BOOL div_zero_flag;
     
     Equation *e;
 }

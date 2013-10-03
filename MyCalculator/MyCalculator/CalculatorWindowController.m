@@ -32,25 +32,6 @@
     
     /* init member vars */
     [self resetAll];
-    
-}
-
-//-----------------------------------------------------
-// Sets all member vars and display to 0
-//-----------------------------------------------------
-- (void) resetExceptForAnswerBox
-{
-    [current_value setString:@""];
-    [equation setStringValue:@""];
-    
-    operator_called = NO;
-    //equals_was_last_called = NO;
-    decimal_placed = NO;
-    close_bracket_equals = NO;
-    was_last_close_bracket = NO;
-    div_zero_flag = NO;
-    
-    [e reset];
 }
 
 //-----------------------------------------------------
@@ -65,9 +46,7 @@
     operator_called = NO;
     equals_was_last_called = NO;
     decimal_placed = NO;
-    close_bracket_equals = NO;
     was_last_close_bracket = NO;
-    div_zero_flag = NO;
     
     [e reset];
 }
@@ -87,8 +66,8 @@
 //-----------------------------------------------------
 - (IBAction) On_Delete:(id)sender
 {
-    // the way this calculator is set up, the user cannot delete an operator, or a number
-    // if equals has just been pressed
+    // the way this calculator is set up, the user cannot delete an operator,
+    // or a number if equals has just been pressed
     if (equals_was_last_called || operator_called) {
         return;
     }
@@ -103,6 +82,8 @@
         [equation setStringValue:[[equation stringValue] substringToIndex:[[equation stringValue] length] - 1]];
     }
     
+    // if current_value's last remaining char is deleted, make it equal to 0
+    // else if it has more than 1 char remaining, simply subtract one
     if ([current_value length] == 1) {
         [self UpdateCurrentValueWithString:[current_value substringToIndex:[current_value length] - 1]];
         [answer_box setStringValue:ZERO];
@@ -115,19 +96,16 @@
 
 //-----------------------------------------------------
 // Method called when value in matrix is switched
+// if Tag == 0, degrees
+// if Tag == 1, radians
 //-----------------------------------------------------
 - (IBAction)On_Matrix:(id)sender
 {
-    // if Tag == 0, degrees
-    // if Tag == 1, radians
-    
     if ([matrix_degrad selectedTag] == 0) {
         [e setDegrees];
-    }
-    else {
+    } else { // selectedTag == 1
         [e setRadians];
     }
-    
 }
 
 //-----------------------------------------------------
@@ -135,7 +113,9 @@
 //-----------------------------------------------------
 - (IBAction) On_0:(id)sender
 {
-    [self On_RegNum:ZERO];
+    if (! [current_value isEqualToString:ZERO]) {
+        [self On_RegNum:ZERO];
+    }
 }
 
 //-----------------------------------------------------
@@ -216,7 +196,14 @@
 - (IBAction) On_Decimal:(id)sender
 {
     if (!decimal_placed) {
-        [self On_RegNum:DEC];
+        
+        // according to current_value, run either @"0." or just @"."
+        if ([current_value isEqualToString:@""]) {
+            [self On_RegNum:@"0."];
+        } else {
+            [self On_RegNum:DEC];
+        }
+        
         decimal_placed = YES;
     }
 }
@@ -235,6 +222,7 @@
 - (IBAction)On_Close_Bracket:(id)sender
 {
     [self On_RegOp:CLOSE_BRACKET];
+    was_last_close_bracket = YES;
 }
 
 //-----------------------------------------------------
@@ -346,7 +334,14 @@
         equals_was_last_called = NO;
     }
     
-    [self AppendToCurrentValueWithString:s];
+    // if decimal, and no number before it.
+//    if ([s isEqualToString:@"."] && [current_value isEqualToString:@""]) {
+//        // if decimal with no number input before it
+//        [self UpdateCurrentValueWithString:@"0."];
+//    } else {
+        [self AppendToCurrentValueWithString:s];
+//    }
+    
     [equation setStringValue:[[equation stringValue] stringByAppendingString:s]];
 }
 
@@ -355,17 +350,8 @@
 //-----------------------------------------------------
 - (void) On_RegOp:(NSString *)op
 {
-
-//TODO: probably something here to check stuff
-    if ([op isEqualToString:CLOSE_BRACKET]) {
-        close_bracket_equals = YES;
-    }
-    else {
-        close_bracket_equals = NO;
-    }
-    
     // want a regular operator to continue the equation
-    if (equals_was_last_called && !div_zero_flag) {
+    if (equals_was_last_called) {
         
         // however, if the operator is a function or bracket, 
         if ([Equation doesOpOpenBracket:op]) {
@@ -375,22 +361,19 @@
         [equation setStringValue:current_value];
     }
     
-    div_zero_flag = NO;
-    
     equals_was_last_called = NO;
     
     /* add preceding number to equation string */
     
-    if (![Equation doesOpOpenBracket:op] && !was_last_close_bracket) {
+    if ((![Equation doesOpOpenBracket:op] && !was_last_close_bracket) ||
+         ([Equation doesOpOpenBracket:op] && !was_last_close_bracket && ![current_value isEqualToString:@""])
+        ) {
         
-//        if ([current_value isEqualToString:@""]) {
-//            [self On_RegNum:@"0"];
-//        }
-        
+        /* check current value */
         if (![current_value isEqualToString:@""]) {
             [e appendStringToEquation:[NSString stringWithString:current_value]];
         }
-        else { // is there a better way to do this. the other if doesn't work.
+        else { // is there a better way to do this? the other if doesn't work.
             [e appendStringToEquation:ZERO];
             [equation setStringValue:ZERO];
         }
@@ -404,14 +387,8 @@
     
     operator_called = YES;
     decimal_placed = NO;
-    
-    if (!close_bracket_equals) {
-        was_last_close_bracket = NO;
-    }
-    if ([op isEqualToString:CLOSE_BRACKET]) {
-        was_last_close_bracket = YES;
-    }
-    
+    was_last_close_bracket = NO;
+
     /* add current operator to the operators array */
     [e appendStringToEquation:op];
 }
@@ -426,7 +403,7 @@
     if (!equals_was_last_called) {
         
         // this will put the last item into the equation. if 
-        if (!close_bracket_equals) {
+        if (!was_last_close_bracket) {
             
             // add current_value to eq array
             [e appendStringToEquation:current_value];
@@ -443,7 +420,6 @@
         else {
             [self resetAll];
             [self WriteToAnswerBox:ERROR_STRING];
-            div_zero_flag = YES;
         }
         
         was_last_close_bracket = NO;
@@ -464,13 +440,10 @@
 //-----------------------------------------------------
 - (void) AppendToCurrentValueWithString:(NSString *)s
 {
-    if ([s isEqualToString:@"."] && [current_value isEqualToString:@""]) {
-        [self UpdateCurrentValueWithString:@"0."];
-    }
-    else if (! [current_value isEqualToString:ZERO]) {
+    if (! [current_value isEqualToString:ZERO]) {
         [current_value appendString:s];
     }
-    else { // current_value == 0
+    else { // current_value == 0, don't want to append multiple 0's
         [self UpdateCurrentValueWithString:s];
     }
     

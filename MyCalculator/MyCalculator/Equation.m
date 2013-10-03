@@ -1,4 +1,4 @@
-//
+
 //  Equation.m
 //  MyCalculator
 //
@@ -12,20 +12,25 @@
 
 @implementation Equation
 
+//-----------------------------------------------------
+// Initializes the Equation object
+//-----------------------------------------------------
 - (id) init
 {
     bracket_level = 0;
-    was_precedence_init_called = NO;
     isRadians = YES;
     isDegrees = NO;
     
     output = [[Stack alloc] init];
     operators = [[Stack alloc] init];
     equation = [NSMutableArray array];
-    //[self initPrecendenceDict];
+    [self initPrecendenceDict];
     return self;
 }
 
+//-----------------------------------------------------
+// Deletes all objects in arrays and stacks
+//-----------------------------------------------------
 - (void) reset
 {
     bracket_level = 0;
@@ -35,11 +40,35 @@
     [equation removeAllObjects];
 }
 
+//-----------------------------------------------------
+// Sets isRadians BOOL and unsets isDegrees
+//-----------------------------------------------------
+- (void) setRadians
+{
+    isRadians = YES;
+    isDegrees = NO;
+}
+
+//-----------------------------------------------------
+// Sets isDegrees BOOL and unsets isRadians
+//-----------------------------------------------------
+- (void) setDegrees
+{
+    isRadians = NO;
+    isDegrees = YES;
+}
+
+//-----------------------------------------------------
+// Appends string to equation as an extra object
+//-----------------------------------------------------
 - (void) appendStringToEquation:(NSString *)str
 {
     [equation addObject:str];
 }
 
+//-----------------------------------------------------
+// Pops off the last object from equation array
+//-----------------------------------------------------
 - (NSString *) popLastObject
 {
     NSString *last = [equation lastObject];
@@ -47,15 +76,65 @@
     return last;
 }
 
+//-----------------------------------------------------
+// Inserts MULT strings into equation array if there
+// is a number followed by a bracket / function
+// (eg. 1 + 2 ( 3 + 4 )
+//-----------------------------------------------------
+- (void) insertMultsIfNeeded:(NSMutableArray*)eq
+{
+    int i;
+    NSString *obj;
+    
+    // loop over contents of equation and search for @"("
+    // start from object 1 because
+    for (i = 1; i < [eq count]; i++) {
+        
+        obj = [eq objectAtIndex:i];
+        
+        // if obj is a function operator, and the previous object in the
+        // equation array is not an operator, insert MULT in between these
+        
+        if ([[self class] doesOpOpenBracket:obj] &&
+            ![[self class] isOperator:[eq objectAtIndex:(i - 1)]]
+            ) {
+            [eq insertObject:MULT atIndex:i];
+        }
+    }
+}
+
+- (void) appendClosingBracketsIfNeeded:(NSMutableArray*)eq
+{
+    
+}
+
+//-----------------------------------------------------
+// Performs the shunting-yard algorithm with the
+// internal equation array, which creates output and
+// operator stacks and evaluates operations in between
+//-----------------------------------------------------
 - (BOOL) shuntingYard
 {
     return [self shuntingYardWithEquation:equation];
 }
 
+//-----------------------------------------------------
+// Performs the shunting-yard algorithm with an
+// equation array eq, which creates output and
+// operator stacks and evaluates operations in between
+//-----------------------------------------------------
 - (BOOL) shuntingYardWithEquation:(NSMutableArray *)eq
 {
+    // check for empty eq array
+    if ([eq count] == 0) {
+        return FALSE;
+    }
+    
     NSString *last_op;
     NSString *item;
+    
+    [self insertMultsIfNeeded:eq];
+    [self appendClosingBracketsIfNeeded:eq];
     
     // allow NSNumberFormatter to check if the string is a valid floating point number or not
     NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
@@ -75,8 +154,7 @@
             bracket_level--;
             
             // pop elements off operators and compute until "(" is encountered
-            while (! [[self class] doesOpOpenBracket:(NSString*) [operators peek]]) {//! [(NSString*)[operators peek] isEqualToString:OPEN_BRACKET]) {
-                
+            while (! [[self class] doesOpOpenBracket:(NSString*) [operators peek]]) {
                 last_op = (NSString*)[operators peek];
                 
                 // case when there are unmatching ")" brackets. should return error
@@ -97,13 +175,9 @@
             // else, the operator is a simple close bracket, and no further computation is necessary
         }
         else { // if string is another operator
-            
-            if (!was_precedence_init_called) {
-                [self initPrecendenceDict];
-            }
-            
             NSNumber *current = [self checkPrecedence:item];
             
+            // if the operator is a bracket
             if ([current intValue] == OPEN_BRACKET_PRECEDENCE) {
                 bracket_level++;
             }
@@ -117,7 +191,7 @@
                 // if the precedence is not equal to OPEN_BRACKET_PRECEDENCE and is greater than current
                 if (! ([top_stack intValue] == OPEN_BRACKET_PRECEDENCE) &&
                        [top_stack isGreaterThanOrEqualTo:current]
-                ) {
+                    ) {
                     [self Evaluate];
                 }
                 else {
@@ -139,8 +213,12 @@
     else return FALSE;
 }
 
+//-----------------------------------------------------
+// Initializes precedence dictionary
+//-----------------------------------------------------
 - (void) initPrecendenceDict
 {
+    // array holding all valid operators offered by calculator
     NSArray *valid_operators = [NSArray arrayWithObjects:
                                     PLUS,
                                     MINUS,
@@ -157,6 +235,7 @@
                                     E_POW,
                                 nil];
     
+    // array holding all precedences corresponding to available operators above
     NSArray *precedences = [NSArray arrayWithObjects:
                                     [NSNumber numberWithInt:1],
                                     [NSNumber numberWithInt:1],
@@ -173,11 +252,13 @@
                                     [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
                                 nil];
     
+    // create precedence_lookup dictionary
     precedence_lookup = [NSDictionary dictionaryWithObjects:precedences forKeys:valid_operators];
-    
-    was_precedence_init_called = TRUE;
 }
 
+//-----------------------------------------------------
+// Checks precedence of operator op
+//-----------------------------------------------------
 - (NSNumber*) checkPrecedence:(NSString*)op
 {
     return [precedence_lookup objectForKey:op];
@@ -237,6 +318,9 @@
     return result;
 }
 
+//-----------------------------------------------------
+// Evaluates one function func, with operator
+//-----------------------------------------------------
 - (NSNumber*) EvaluateFunction:(NSString*)func
 {
     NSNumber *result = nil;
@@ -253,38 +337,13 @@
     if ((isDegrees && isRadians) || (!isDegrees && !isRadians)) {
         return nil;
     }
-//    else if (isDegrees) {
-//
-//        // else if degrees, we need to convert to radians
-//        d_num = [self convertDegreesToRadians:d_num];
-//    }
-    
-    if ([func isEqualToString:ROOT]) {
+
+    // switch according to value of string
+    if ([[self class] isTrigFunction:func]) {
+        result = [self EvaluateTrigFunction:func withNumber:d_num];
+    }
+    else if ([func isEqualToString:ROOT]) {
         result = [NSNumber numberWithDouble:sqrt(d_num)];
-    }
-    else if ([func isEqualToString:SIN]) {
-        
-        if (isDegrees) {
-            d_num = [self convertDegreesToRadians:d_num];
-        }
-        
-        result = [NSNumber numberWithDouble:sin(d_num)];
-    }
-    else if ([func isEqualToString:COS]) {
-        
-        if (isDegrees) {
-            d_num = [self convertDegreesToRadians:d_num];
-        }
-        
-        result = [NSNumber numberWithDouble:cos(d_num)];
-    }
-    else if ([func isEqualToString:TAN]) {
-        
-        if (isDegrees) {
-            d_num = [self convertDegreesToRadians:d_num];
-        }
-        
-        result = [NSNumber numberWithDouble:tan(d_num)];
     }
     else if ([func isEqualToString:LOG]) {
         result = [NSNumber numberWithDouble:log10(d_num)];
@@ -307,16 +366,56 @@
     return result;
 }
 
+//-----------------------------------------------------
+// Evaluates one trig function func, with number d_num
+// Invalid checks is performed in EvaluateFunction
+//-----------------------------------------------------
+- (NSNumber*) EvaluateTrigFunction:(NSString*)func withNumber:(double)d_num
+{
+    NSNumber *result;
+    
+    if (isDegrees) {
+        d_num = [self convertDegreesToRadians:d_num];
+    }
+    
+    if ([func isEqualToString:SIN]) {
+        result = [NSNumber numberWithDouble:sin(d_num)];
+    }
+    else if ([func isEqualToString:COS]) {
+        result = [NSNumber numberWithDouble:cos(d_num)];
+    }
+    else if ([func isEqualToString:TAN]) {
+        result = [NSNumber numberWithDouble:tan(d_num)];
+    }
+    else {
+        result = nil;
+    }
+    
+    return result;
+}
+
+//-----------------------------------------------------
+// Converts num from degrees to radians, in order to
+// correctly compute trig functions
+//-----------------------------------------------------
 - (double) convertDegreesToRadians:(double)num
 {
     return num * M_PI / 180;
 }
 
+//-----------------------------------------------------
+// Performs the shunting-yard algorithm and computes
+// all remaining operations from internal equation array
+//-----------------------------------------------------
 - (NSNumber*) performShuntingYardComputation
 {
     return [self performShuntingYardComputationWithEquation:equation];
 }
 
+//-----------------------------------------------------
+// Performs the shunting-yard algorithm and computes
+// all remaining operations from equation array eq
+//-----------------------------------------------------
 - (NSNumber*) performShuntingYardComputationWithEquation:(NSMutableArray *)eq
 {
     NSNumber *n;
@@ -332,47 +431,76 @@
             }
         }
         
-        // return last element left over
-        return (NSNumber*)[output pop];
+        // check that last element is not an NSString anymore, and that it has
+        // successfully been changed to an NSNumber. If not, change it here.
+        
+        if ([[output peek] isKindOfClass:[NSString class]]) {
+            NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
+            [nf setAllowsFloats:YES];
+            n = [nf numberFromString:(NSString*)[output pop]];
+        }
+        else {
+        
+            // return last element left over
+            n = (NSNumber*)[output pop];
+        }
+        
+        return n;
     }
 
     // else there was an issue, and shuntingYardWithEquation method returned false
     return nil;
-    
 }
 
-// removes all objects and resets internal vars
-- (void) clear
-{
-    [output removeAllObjects];
-    [operators removeAllObjects];
-}
-
-- (void) setRadians
-{
-    isRadians = YES;
-    isDegrees = NO;
-}
-
-- (void) setDegrees
-{
-    isRadians = NO;
-    isDegrees = YES;
-}
-
-// will probably need to add a method that compares operator to a slew of function operators
+//-----------------------------------------------------
+// Compares operator op to function operators to
+// determine whether it contains an open bracket @"("
+//-----------------------------------------------------
 + (BOOL) doesOpOpenBracket:(NSString *)op
 {
+    // compare op to functions which open a bracket (eg. @"sin("...))
     if ([op isEqualToString:OPEN_BRACKET]   ||
         [op isEqualToString:ROOT]           ||
-        [op isEqualToString:SIN]            ||
-        [op isEqualToString:COS]            ||
-        [op isEqualToString:TAN]            ||
+        [[self class] isTrigFunction:op]    ||
         [op isEqualToString:LOG]            ||
         [op isEqualToString:LN]             ||
         [op isEqualToString:E_POW]
         ) {
                 return YES;
+    }
+    
+    return NO;
+}
+
+//-----------------------------------------------------
+// Checks whether the function operator is a trig function
+//-----------------------------------------------------
++ (BOOL) isTrigFunction:(NSString*)func
+{
+    if ([func isEqualToString:SIN] ||
+        [func isEqualToString:COS] ||
+        [func isEqualToString:TAN]
+        ) {
+        
+        return YES;
+    }
+    
+    return NO;
+}
+
+//-----------------------------------------------------
+// Returns YES if input string is an operator
+//-----------------------------------------------------
++ (BOOL) isOperator:(NSString *)s
+{
+    if ([[self class] doesOpOpenBracket:s]  ||
+        [s isEqualToString:PLUS]           ||
+        [s isEqualToString:MINUS]          ||
+        [s isEqualToString:MULT]           ||
+        [s isEqualToString:DIV]            ||
+        [s isEqualToString:POW]
+        ) {
+        return YES;
     }
     
     return NO;

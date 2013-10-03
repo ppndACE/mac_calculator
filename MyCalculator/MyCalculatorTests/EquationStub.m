@@ -10,6 +10,13 @@
 
 @implementation EquationStub
 
+// Overrides inherited parent method
+- (void) reset
+{
+    [super reset];
+    [self setBracketLevel:0];
+}
+
 - (NSDictionary*)getPrecedenceDict
 {
     return precedence_lookup;
@@ -38,6 +45,16 @@
 - (void) pushOntoOperators:(NSString*)op
 {
     [operators push:op];
+}
+
+- (int) getBracketLevel
+{
+    return bracket_level;
+}
+
+- (void) setBracketLevel:(int)num
+{
+    bracket_level = num;
 }
 
 @end

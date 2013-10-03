@@ -35,3 +35,4 @@
 #define DEC @"."
 
 #define ERROR_STRING @"err."
+#define LAMBDA 0.0000000000001
