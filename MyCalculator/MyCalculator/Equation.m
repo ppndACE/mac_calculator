@@ -346,10 +346,24 @@
         result = [NSNumber numberWithDouble:sqrt(d_num)];
     }
     else if ([func isEqualToString:LOG]) {
-        result = [NSNumber numberWithDouble:log10(d_num)];
+        
+        // check for invalid number (would normally return -inf)
+        if (d_num == 0) {
+            result = nil;
+            [self reset];
+        } else {
+            result = [NSNumber numberWithDouble:log10(d_num)];
+        }
     }
     else if ([func isEqualToString:LN]) {
-        result = [NSNumber numberWithDouble:log(d_num)];
+        
+        // check for invalid number (would normally return -inf)
+        if (d_num == 0) {
+            result = nil;
+            [self reset];
+        } else {
+            result = [NSNumber numberWithDouble:log(d_num)];
+        }
     }
     else if ([func isEqualToString:E_POW]) {
         result = [NSNumber numberWithDouble:pow(M_E, d_num)];
