@@ -2,6 +2,8 @@
 //  CalculatorAppController.m
 //  MyCalculator
 //
+//  Controls the display of the Window
+//
 //  Created by Matthew McAllister on 2013-05-10.
 //  Copyright (c) 2013 Matthew McAllister. All rights reserved.
 //
@@ -12,7 +14,8 @@
 
 - (void) showWindow
 {
-    /* Get window controller */
+        // Get window controller
+    
     if (!mycwc) {
         mycwc = [[CalculatorWindowController alloc] init];
     }

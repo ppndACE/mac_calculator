@@ -2,6 +2,9 @@
 //  CalculatorWindowController.h
 //  MyCalculator
 //
+//  Implements the Controller portion of MVC.
+//  Controls the GUI interaction with logic.
+//
 //  Created by Matthew McAllister on 2013-05-10.
 //  Copyright (c) 2013 Matthew McAllister. All rights reserved.
 //
@@ -11,8 +14,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import "Equation.h"
-
-/* for now, this controls the order of operations and available operators */
 
 @interface CalculatorWindowController : NSWindowController
 {

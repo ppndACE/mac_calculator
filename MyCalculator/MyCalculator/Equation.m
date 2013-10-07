@@ -152,6 +152,9 @@
     NSString *last_op;
     NSString *item;
     
+        // check brackets and append extra close brackets if needed
+        // if there are too many close brackets, return error
+    
     if (bracket_level > 0) {
         [self appendClosingBrackets:eq];
     } else if (bracket_level < 0) {
@@ -159,6 +162,8 @@
     }
     
         // else brackets are already matched, continue
+        // and insert mults if there are any instances of
+        // eg 2 ( 2 + 2 ) --> 2 * ( 2 + 2 )
     
     [self insertMultsIfNeeded:eq];
     
@@ -179,10 +184,7 @@
         
         if ([nf numberFromString:item]) {
             [output push:item];
-        }
-        else if ([item isEqualToString:CLOSE_BRACKET]) { // if string is a closing bracket
-            
-//            bracket_level--;
+        }  else if ([item isEqualToString:CLOSE_BRACKET]) { // if string is a closing bracket
             
                 // pop elements off operators and compute until "(" is encountered
             
@@ -212,16 +214,10 @@
             
                 // else, the operator is a simple close bracket,
                 // and no further computation is necessary
-        }
-        else { // if string is another operator
+            
+        } else { // if string is another operator
+            
             NSNumber *current = [self checkPrecedence:item];
-            
-                // if the operator is a bracket
-            
-//            if ([current intValue] == OPEN_BRACKET_PRECEDENCE) {
-//                bracket_level++;
-//            }
-            
             NSNumber *top_stack;
             
                 // first elem here in while loop is the top item of the stack
@@ -236,8 +232,7 @@
                        [top_stack isGreaterThanOrEqualTo:current]
                     ) {
                     [self Evaluate];
-                }
-                else {
+                } else {
                     break;
                 }
             }
@@ -253,10 +248,7 @@
     
     [equation removeAllObjects];
     
-//    if (bracket_level == 0) {
-        return TRUE;
-//    }
-//    else return FALSE;
+    return TRUE;
 }
 
 //-----------------------------------------------------
@@ -325,46 +317,45 @@
     NSNumber *second = (NSNumber*) [output pop];
     NSNumber *first = (NSNumber*) [output pop];
     
-    // need to also account for case where a bracket may start the equation, i think
+        // need to also account for case where a bracket may start the equation, i think
+    
     if (first == nil || second == nil) {
         return FALSE; // unmatched numbers & operators
     } // this case probably shouldn't happen though
     
 //TODO: check here for null numbers -- IMPORTANT
     
-    // determines which operation to run according to operator popped
-    // unfortunately can't do a switch on NSStrings :(
+        // determines which operation to run according to operator popped
+        // unfortunately can't do a switch on NSStrings :(
+    
     if ([op isEqualToString:PLUS]) {
         result = [NSNumber numberWithDouble:([first doubleValue] + [second doubleValue])];
-    }
-    else if ([op isEqualToString:MINUS]) {
+    } else if ([op isEqualToString:MINUS]) {
         result = [NSNumber numberWithDouble:([first doubleValue] - [second doubleValue])];
-    }
-    else if ([op isEqualToString:MULT]) {
+    } else if ([op isEqualToString:MULT]) {
         result = [NSNumber numberWithDouble:([first doubleValue] * [second doubleValue])];
-    }
-    else if ([op isEqualToString:DIV]) {
+    } else if ([op isEqualToString:DIV]) {
         
         if ([second doubleValue] == 0) {
             result = nil;
-        }
-        else {
+        } else {
             result = [NSNumber numberWithDouble:([first doubleValue] / [second doubleValue])];
         }
-    }
-    else if ([op isEqualToString:POW]) {
+        
+    } else if ([op isEqualToString:POW]) {
         result = [NSNumber numberWithDouble:pow([first doubleValue], [second doubleValue])];
-    }
-    else { // this case should never happen unless the operator is an unmatched open bracket @"(" or function
+    } else {
         result = nil;
     }
     
-    // push the result of the evaluated expression back onto the output stack
+        // push the result of the evaluated expression back onto the output stack
+    
     if (result) {
         [output push:result];
     }
     
-    /* return the evaluated operation as an NSNumber */
+        // return the evaluated operation as an NSNumber
+    
     return result;
 }
 
@@ -373,56 +364,59 @@
 //-----------------------------------------------------
 - (NSNumber*) EvaluateFunction:(NSString*)func
 {
+        // check for degrees and radians being set to same value
+    
+    if ((isDegrees && isRadians) || (!isDegrees && !isRadians)) {
+        return nil;
+    }
+    
     NSNumber *result = nil;
     NSNumber *num = (NSNumber*)[output pop];
     
-    double d_num = [num doubleValue];
+        // check for NULL number
     
-    // check for NULL number
     if (num == nil) {
         return nil;
     }
     
-    // check for degrees and radians being set to same value
-    if ((isDegrees && isRadians) || (!isDegrees && !isRadians)) {
-        return nil;
-    }
+    double d_num = [num doubleValue];
 
-    // switch according to value of string
+        // switch according to value of string func
+    
     if ([[self class] isTrigFunction:func]) {
         result = [self EvaluateTrigFunction:func withNumber:d_num];
-    }
-    else if ([func isEqualToString:ROOT]) {
+    } else if ([func isEqualToString:ROOT]) {
         result = [NSNumber numberWithDouble:sqrt(d_num)];
-    }
-    else if ([func isEqualToString:LOG]) {
+    } else if ([func isEqualToString:LOG]) {
         
-        // check for invalid number (would normally return -inf)
+            // check for invalid number (would normally return -inf)
+        
         if (d_num == 0) {
             result = nil;
             [self reset];
         } else {
             result = [NSNumber numberWithDouble:log10(d_num)];
         }
-    }
-    else if ([func isEqualToString:LN]) {
         
-        // check for invalid number (would normally return -inf)
+    } else if ([func isEqualToString:LN]) {
+        
+            // check for invalid number (would normally return -inf)
+        
         if (d_num == 0) {
             result = nil;
             [self reset];
         } else {
             result = [NSNumber numberWithDouble:log(d_num)];
         }
-    }
-    else if ([func isEqualToString:E_POW]) {
+        
+    } else if ([func isEqualToString:E_POW]) {
         result = [NSNumber numberWithDouble:pow(M_E, d_num)];
-    }
-    else { //case should never happen
+    } else { // error
         result = nil;
     }
     
-    // push result back onto output stack
+        // push result back onto output stack
+    
     if (result) {
         [output push:result];
     }
@@ -438,20 +432,21 @@
 {
     NSNumber *result;
     
+        // if d_num is a value in degrees, we need to switch to radians
+    
     if (isDegrees) {
         d_num = [self convertDegreesToRadians:d_num];
     }
     
+        // determine which trig function and evaluate
+    
     if ([func isEqualToString:SIN]) {
         result = [NSNumber numberWithDouble:sin(d_num)];
-    }
-    else if ([func isEqualToString:COS]) {
+    } else if ([func isEqualToString:COS]) {
         result = [NSNumber numberWithDouble:cos(d_num)];
-    }
-    else if ([func isEqualToString:TAN]) {
+    } else if ([func isEqualToString:TAN]) {
         result = [NSNumber numberWithDouble:tan(d_num)];
-    }
-    else {
+    } else {
         result = nil;
     }
     
@@ -489,30 +484,32 @@
         while ([output count] > 1) {
             n = [self Evaluate];
             
-            // should happen if unmatched opening bracket
+                // should happen if unmatched opening bracket
+            
             if (!n) {
                 return nil;
             }
         }
         
-        // check that last element is not an NSString anymore, and that it has
-        // successfully been changed to an NSNumber. If not, change it here.
+            // check that last element is not an NSString anymore, and that it has
+            // successfully been changed to an NSNumber. If not, change it here.
         
         if ([[output peek] isKindOfClass:[NSString class]]) {
             NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
             [nf setAllowsFloats:YES];
             n = [nf numberFromString:(NSString*)[output pop]];
-        }
-        else {
+        } else {
         
-            // return last element left over
+                // return last element left over
+
             n = (NSNumber*)[output pop];
         }
         
         return n;
     }
 
-    // else there was an issue, and shuntingYardWithEquation method returned false
+        // else there was an issue, and shuntingYardWithEquation method returned false
+    
     return nil;
 }
 
@@ -522,7 +519,8 @@
 //-----------------------------------------------------
 + (BOOL) doesOpOpenBracket:(NSString *)op
 {
-    // compare op to functions which open a bracket (eg. @"sin("...))
+        // compare op to functions which open a bracket (eg. @"sin("...))
+    
     if ([op isEqualToString:OPEN_BRACKET]   ||
         [op isEqualToString:ROOT]           ||
         [[self class] isTrigFunction:op]    ||

@@ -2,6 +2,9 @@
 //  CalculatorWindowController.m
 //  MyCalculator
 //
+//  Implements the Controller portion of MVC.
+//  Controls the GUI interaction with logic.
+//
 //  Created by Matthew McAllister on 2013-05-10.
 //  Copyright (c) 2013 Matthew McAllister. All rights reserved.
 //
@@ -66,8 +69,9 @@
 //-----------------------------------------------------
 - (IBAction) On_Delete:(id)sender
 {
-    // the way this calculator is set up, the user cannot delete an operator,
-    // or a number if equals has just been pressed
+        // the way this calculator is set up, the user cannot delete an operator,
+        // or a number if equals has just been pressed
+    
     if (equals_was_last_called || operator_called) {
         return;
     }
@@ -77,21 +81,23 @@
         return;
     }
     
-    // check that length is valid for removing 1 element
+        // check that length is valid for removing 1 element
+    
     if (len > 0) {
         [equation setStringValue:[[equation stringValue] substringToIndex:[[equation stringValue] length] - 1]];
     }
     
-    // if current_value's last remaining char is deleted, make it equal to 0
-    // else if it has more than 1 char remaining, simply subtract one
+        // if current_value's last remaining char is deleted, make it equal to 0
+        // else if it has more than 1 char remaining, simply subtract one
+    
     if ([current_value length] == 1) {
         [self UpdateCurrentValueWithString:[current_value substringToIndex:[current_value length] - 1]];
         [answer_box setStringValue:ZERO];
-    }
-    else if ([current_value length] > 0) {
+    } else if ([current_value length] > 0) {
         [self UpdateCurrentValueWithString:[current_value substringToIndex:[current_value length] - 1]];
     }
-    // else do nothing
+    
+        // else do nothing
 }
 
 //-----------------------------------------------------
@@ -113,6 +119,9 @@
 //-----------------------------------------------------
 - (IBAction) On_0:(id)sender
 {
+        // check if current value is @"0".
+        // don't want multiple zeros in a row
+    
     if (! [current_value isEqualToString:ZERO]) {
         [self On_RegNum:ZERO];
     }
@@ -195,10 +204,13 @@
 //-----------------------------------------------------
 - (IBAction) On_Decimal:(id)sender
 {
+        // don't want to insert multiple decimals
+    
     if (!decimal_placed) {
         
-        // according to current_value, run either @"0." or just @"."
-        if ([current_value isEqualToString:@""]) {
+            // according to current_value, run either @"0." or just @"."
+        
+        if ([current_value isEqualToString:@""] || equals_was_last_called) {
             [self On_RegNum:@"0."];
         } else {
             [self On_RegNum:DEC];
@@ -328,20 +340,14 @@
 {
     operator_called = NO;
     
-    // case where user wants to start a new equation after computation of previous
+        // case where user wants to start a new equation after computation of previous
+    
     if (equals_was_last_called) {
         [self resetAll];
         equals_was_last_called = NO;
     }
-    
-    // if decimal, and no number before it.
-//    if ([s isEqualToString:@"."] && [current_value isEqualToString:@""]) {
-//        // if decimal with no number input before it
-//        [self UpdateCurrentValueWithString:@"0."];
-//    } else {
-        [self AppendToCurrentValueWithString:s];
-//    }
-    
+
+    [self AppendToCurrentValueWithString:s];
     [equation setStringValue:[[equation stringValue] stringByAppendingString:s]];
 }
 
@@ -350,10 +356,12 @@
 //-----------------------------------------------------
 - (void) On_RegOp:(NSString *)op
 {
-    // want a regular operator to continue the equation
+        // want a regular operator to continue the equation
+    
     if (equals_was_last_called) {
         
-        // however, if the operator is a function or bracket, 
+            // however, if the operator is a function or bracket,
+        
         if ([Equation doesOpOpenBracket:op]) {
             [self UpdateCurrentValueWithString:@""];
         }
@@ -363,17 +371,20 @@
     
     equals_was_last_called = NO;
     
-    /* add preceding number to equation string */
+        // add preceding number to equation string
     
     if ((![Equation doesOpOpenBracket:op] && !was_last_close_bracket) ||
          ([Equation doesOpOpenBracket:op] && !was_last_close_bracket && ![current_value isEqualToString:@""])
         ) {
         
-        /* check current value */
+            // check current value
+        
         if (![current_value isEqualToString:@""]) {
             [e appendStringToEquation:[NSString stringWithString:current_value]];
-        }
-        else { // is there a better way to do this? the other if doesn't work.
+        } else {
+            
+                // is there a better way to do this?
+            
             [e appendStringToEquation:ZERO];
             [equation setStringValue:ZERO];
         }
@@ -382,14 +393,16 @@
     [self UpdateCurrentValueWithString:@""];
     [answer_box setStringValue:ZERO];
     
-    /* write the operator to the equation line */
+        // write the operator to the equation line
+    
     [equation setStringValue:[[equation stringValue] stringByAppendingString:op]];
     
     operator_called = YES;
     decimal_placed = NO;
     was_last_close_bracket = NO;
 
-    /* add current operator to the operators array */
+        // add current operator to the operators array
+    
     [e appendStringToEquation:op];
 }
 
@@ -398,14 +411,17 @@
 //-----------------------------------------------------
 - (IBAction) On_Equals:(id)sender
 {
-    // if user has pressed equals twice, we don't want to compute twice, so only perform operation
-    // on the first time equals was last called
+        // if user has pressed equals twice, we don't want to compute twice,
+        // so only perform operation on the first time equals was last called
+    
     if (!equals_was_last_called) {
         
-        // this will put the last item into the equation. if 
+            // this will put the last item into the equation. if
+        
         if (!was_last_close_bracket) {
             
-            // add current_value to eq array
+                // add current_value to eq array
+            
             [e appendStringToEquation:current_value];
         }
 
@@ -413,15 +429,16 @@
         
         NSNumber *result = [e performShuntingYardComputation];
         
-        // check to see if result is not nil, otherwise catch and display error.
+            // check to see if result is not nil, otherwise catch and display error.
+        
         if (result) {
             [self UpdateCurrentValueWithString:[result stringValue]];
-        }
-        else {
+        } else {
             [self resetAll];
             [self WriteToAnswerBox:ERROR_STRING];
         }
         
+        decimal_placed = NO;
         was_last_close_bracket = NO;
     }
 }
@@ -440,14 +457,17 @@
 //-----------------------------------------------------
 - (void) AppendToCurrentValueWithString:(NSString *)s
 {
+    
+//TODO: check if this 0 check is needed. might be handled in On_RegNum
+    
     if (! [current_value isEqualToString:ZERO]) {
         [current_value appendString:s];
-    }
-    else { // current_value == 0, don't want to append multiple 0's
+    } else { // current_value == 0, don't want to append multiple 0's
         [self UpdateCurrentValueWithString:s];
     }
     
-    // simply copy string of current_value to be displayed in the answer box
+        // simply copy string of current_value to be displayed in the answer box
+    
     [self WriteToAnswerBox:current_value];
 }
 
@@ -458,7 +478,8 @@
 {
     [current_value setString:s];
 
-    // simply copy string of current_value to be displayed in the answer box
+        // simply copy string of current_value to be displayed in the answer box
+    
     [self WriteToAnswerBox:current_value];
 }
 
