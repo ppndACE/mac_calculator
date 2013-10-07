@@ -2,6 +2,8 @@
 //  Equation.h
 //  MyCalculator
 //
+//  Class which handles the equation parsing and computations.
+//
 //  Created by Matthew McAllister on 2013-09-17.
 //  Copyright (c) 2013 Matthew McAllister. All rights reserved.
 //

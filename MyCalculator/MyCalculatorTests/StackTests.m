@@ -27,7 +27,23 @@
     STAssertEquals([s peek], str, @"compare peek elem and str");
 }
 
-
+// tests stack pop method with an NSString object
+- (void) testPopString
+{
+    STAssertTrue([s isEmpty], @"s is not empty");
+    
+    // push string here
+    NSString *str = @"hello";
+    [s push:str];
+    
+    STAssertFalse([s isEmpty], @"s is empty");
+    
+    // pop string here
+    NSString *check = (NSString*)[s pop];
+    
+    STAssertEqualObjects(str, check, @"different strings. error");
+    STAssertTrue([s isEmpty], @"s is not empty");
+}
 
 
 @end

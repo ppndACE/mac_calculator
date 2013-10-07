@@ -20,14 +20,16 @@
     
     eq_no_brackets = [NSMutableArray arrayWithObjects:@"1", @"+", @"2", @"*", @"8", nil];
     eq_brackets = [NSMutableArray arrayWithObjects:@"1", @"+", @"3", @"*", @"(", @"2", @"+", @"4", @")", @"^", @"2", nil];
-    eq_mismatch_brackets = [NSMutableArray arrayWithObjects:@"3", @"*", @"2", @"+", @"4", @")", nil];
+    eq_mismatch_brackets_1 = [NSMutableArray arrayWithObjects:@"3", @"*", @"2", @"+", @"4", @")", nil];
+    eq_mismatch_brackets_2 = [NSMutableArray arrayWithObjects:@"3", @"*", @"(", @"(", @"2", @"+", @"4", @")", nil];
     eq_start_function = [NSMutableArray arrayWithObjects:@"cos(", @"0", @")", nil];
     eq_times_function = [NSMutableArray arrayWithObjects:@"5", @"+", @"4", @"cos(", @"0", @")", nil];
     eq_double_op = [NSMutableArray arrayWithObjects:@"1", @"+", @"+", @"3", nil];
     
     res_no_brackets = [NSNumber numberWithDouble:(1 + 2 * 8)];
     res_brackets = [NSNumber numberWithDouble:(1 + 3 * pow(( 2 + 4 ), 2))];
-    res_mismatch_brackets = nil;
+    res_mismatch_brackets_1 = nil;
+    res_mismatch_brackets_2 = [NSNumber numberWithDouble:(3 * (( 2 + 4 )))];
     res_start_function = [NSNumber numberWithDouble:(cos(0))];
     res_times_function = [NSNumber numberWithDouble:(5 + 4 * cos(0))];
     res_double_op = nil;
@@ -199,7 +201,7 @@
     [e reset];
     
     // this case should purposely be false because the eq has mismatched @")"
-    b = [e shuntingYardWithEquation:eq_mismatch_brackets];
+    b = [e shuntingYardWithEquation:eq_mismatch_brackets_1];
     STAssertFalse(b, @"unmatched bracket shunting yard no fail");
     [e reset];
     
@@ -221,8 +223,8 @@
     STAssertEqualObjects(result, res_brackets, @"brackets results don't match");
     [e reset];
     
-    result = [e performShuntingYardComputationWithEquation:eq_mismatch_brackets];
-    STAssertEqualObjects(result, res_mismatch_brackets, @"mismatched not nil");
+    result = [e performShuntingYardComputationWithEquation:eq_mismatch_brackets_1];
+    STAssertEqualObjects(result, res_mismatch_brackets_1, @"mismatched not nil");
     [e reset];
     
     result = [e performShuntingYardComputationWithEquation:eq_start_function];
@@ -235,6 +237,19 @@
     
 //    result = [e performShuntingYardComputationWithEquation:eq_double_op];
 //    STAssertEqualObjects(result, res_double_op, @"eq double op broken");
+}
+
+- (void) testAppendingAndShuntingYardWithTooManyOpenBrackets
+{
+    NSNumber *result;
+    
+    for (int i = 0; i < [eq_mismatch_brackets_2 count]; i++) {
+        [e appendStringToEquation:[eq_mismatch_brackets_2 objectAtIndex:i]];
+    }
+    
+    result = [e performShuntingYardComputation];
+    STAssertEqualObjects(result, res_mismatch_brackets_2, @"mismatched not nil");
+    [e reset];
 }
 
 

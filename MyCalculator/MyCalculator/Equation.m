@@ -1,6 +1,8 @@
-
+//
 //  Equation.m
 //  MyCalculator
+//
+//  Class which handles the equation parsing and computations.
 //
 //  Created by Matthew McAllister on 2013-09-17.
 //  Copyright (c) 2013 Matthew McAllister. All rights reserved.
@@ -64,6 +66,18 @@
 - (void) appendStringToEquation:(NSString *)str
 {
     [equation addObject:str];
+    
+        // if object is a function operator or bracket, we should
+        // add 1 to bracket_level, subtract 1 if close bracket
+    
+    if ([[self checkPrecedence:str] intValue] == OPEN_BRACKET_PRECEDENCE) {
+        bracket_level++;
+    } else if ([str isEqualToString:CLOSE_BRACKET]) {
+        bracket_level--;
+    }
+    
+        // else do nothing
+    
 }
 
 //-----------------------------------------------------
@@ -86,14 +100,15 @@
     int i;
     NSString *obj;
     
-    // loop over contents of equation and search for @"("
-    // start from object 1 because
+        // loop over contents of equation and search for @"("
+        // start from object 1 because
+    
     for (i = 1; i < [eq count]; i++) {
         
         obj = [eq objectAtIndex:i];
         
-        // if obj is a function operator, and the previous object in the
-        // equation array is not an operator, insert MULT in between these
+            // if obj is a function operator, and the previous object in the
+            // equation array is not an operator, insert MULT in between these
         
         if ([[self class] doesOpOpenBracket:obj] &&
             ![[self class] isOperator:[eq objectAtIndex:(i - 1)]]
@@ -103,9 +118,12 @@
     }
 }
 
-- (void) appendClosingBracketsIfNeeded:(NSMutableArray*)eq
+- (void) appendClosingBrackets:(NSMutableArray*)eq
 {
-    
+    int i;
+    for (i = 0; i < bracket_level; i++) {
+        [self appendStringToEquation:CLOSE_BRACKET];
+    }
 }
 
 //-----------------------------------------------------
@@ -125,7 +143,8 @@
 //-----------------------------------------------------
 - (BOOL) shuntingYardWithEquation:(NSMutableArray *)eq
 {
-    // check for empty eq array
+        // check for empty eq array
+    
     if ([eq count] == 0) {
         return FALSE;
     }
@@ -133,31 +152,46 @@
     NSString *last_op;
     NSString *item;
     
-    [self insertMultsIfNeeded:eq];
-    [self appendClosingBracketsIfNeeded:eq];
+    if (bracket_level > 0) {
+        [self appendClosingBrackets:eq];
+    } else if (bracket_level < 0) {
+        return FALSE;
+    }
     
-    // allow NSNumberFormatter to check if the string is a valid floating point number or not
+        // else brackets are already matched, continue
+    
+    [self insertMultsIfNeeded:eq];
+    
+        // allow NSNumberFormatter to check if the string is
+        // a valid floating point number or not
+
     NSNumberFormatter *nf = [[NSNumberFormatter alloc] init];
     [nf setAllowsFloats:YES];
     
-    // iterate in order through equation array of strings to separate numbers from operators
+        // iterate in order through equation array of strings to
+        // separate numbers from operators
+    
     for (int i = 0; i < [eq count]; i++) {
 
         item = [eq objectAtIndex:i];
         
-        // if string is a number
+            // if string is a number
+        
         if ([nf numberFromString:item]) {
             [output push:item];
         }
         else if ([item isEqualToString:CLOSE_BRACKET]) { // if string is a closing bracket
             
-            bracket_level--;
+//            bracket_level--;
             
-            // pop elements off operators and compute until "(" is encountered
+                // pop elements off operators and compute until "(" is encountered
+            
             while (! [[self class] doesOpOpenBracket:(NSString*) [operators peek]]) {
                 last_op = (NSString*)[operators peek];
                 
-                // case when there are unmatching ")" brackets. should return error
+                    // case when there are unmatching ")" brackets.
+                    // should return error
+                
                 if (last_op == nil) {
                     return FALSE;
                 }
@@ -165,30 +199,39 @@
                 [self Evaluate];
             }
             
-            // pop off @"(", because expression inside brackets should have been computed by now
-            // update: since all functions are considered as open brackets, check to determine whether we need
-            // to compute anything extra, or if the operator is a simple open bracket
+                // pop off @"(", because expression inside brackets
+                // should have been computed by now
+                // update: since all functions are considered as open brackets,
+                // check to determine whether we need
+                // to compute anything extra, or if the operator is a simple open bracket
+
             NSString *temp_op = (NSString*)[operators pop];
             if (![temp_op isEqualToString:OPEN_BRACKET]) {
                 [self EvaluateFunction:temp_op];
             }
-            // else, the operator is a simple close bracket, and no further computation is necessary
+            
+                // else, the operator is a simple close bracket,
+                // and no further computation is necessary
         }
         else { // if string is another operator
             NSNumber *current = [self checkPrecedence:item];
             
-            // if the operator is a bracket
-            if ([current intValue] == OPEN_BRACKET_PRECEDENCE) {
-                bracket_level++;
-            }
+                // if the operator is a bracket
+            
+//            if ([current intValue] == OPEN_BRACKET_PRECEDENCE) {
+//                bracket_level++;
+//            }
             
             NSNumber *top_stack;
             
-            // first elem here in while loop is the top item of the stack
+                // first elem here in while loop is the top item of the stack
+            
             while (TRUE) {
                 top_stack = [self checkPrecedence:(NSString*)[operators peek]];
                 
-                // if the precedence is not equal to OPEN_BRACKET_PRECEDENCE and is greater than current
+                    // if the precedence is not equal to OPEN_BRACKET_PRECEDENCE
+                    // and is greater than current
+                
                 if (! ([top_stack intValue] == OPEN_BRACKET_PRECEDENCE) &&
                        [top_stack isGreaterThanOrEqualTo:current]
                     ) {
@@ -199,18 +242,21 @@
                 }
             }
             
-            // after computing, push item onto operators stack
+                // after computing, push item onto operators stack
+            
             [operators push:item];
         }
     }
     
-    // if successful, remove objects from equation because operators and output will be in appropriate locations
+        // if successful, remove objects from equation because operators
+        // and output will be in appropriate locations
+    
     [equation removeAllObjects];
     
-    if (bracket_level == 0) {
+//    if (bracket_level == 0) {
         return TRUE;
-    }
-    else return FALSE;
+//    }
+//    else return FALSE;
 }
 
 //-----------------------------------------------------
@@ -218,7 +264,8 @@
 //-----------------------------------------------------
 - (void) initPrecendenceDict
 {
-    // array holding all valid operators offered by calculator
+        // array holding all valid operators offered by calculator
+    
     NSArray *valid_operators = [NSArray arrayWithObjects:
                                     PLUS,
                                     MINUS,
@@ -233,26 +280,29 @@
                                     LOG,
                                     LN,
                                     E_POW,
-                                nil];
+                                    nil];
     
-    // array holding all precedences corresponding to available operators above
+        // array holding all precedences corresponding to
+        // available operators above
+
     NSArray *precedences = [NSArray arrayWithObjects:
-                                    [NSNumber numberWithInt:1],
-                                    [NSNumber numberWithInt:1],
-                                    [NSNumber numberWithInt:2],
-                                    [NSNumber numberWithInt:2],
-                                    [NSNumber numberWithInt:3],
-                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
-                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
-                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
-                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
-                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
-                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
-                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
-                                    [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                [NSNumber numberWithInt:1],
+                                [NSNumber numberWithInt:1],
+                                [NSNumber numberWithInt:2],
+                                [NSNumber numberWithInt:2],
+                                [NSNumber numberWithInt:3],
+                                [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
+                                [NSNumber numberWithInt:OPEN_BRACKET_PRECEDENCE],
                                 nil];
     
-    // create precedence_lookup dictionary
+        // create precedence_lookup dictionary
+
     precedence_lookup = [NSDictionary dictionaryWithObjects:precedences forKeys:valid_operators];
 }
 
