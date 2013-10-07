@@ -16,6 +16,8 @@
 @synthesize equation;
 @synthesize matrix_degrad;
 
+@synthesize equals_button;
+
 //-----------------------------------------------------
 // Override init
 //-----------------------------------------------------
@@ -23,6 +25,7 @@
 {
     e = [[Equation alloc] init];
     current_value = [[NSMutableString alloc] initWithString:@""];
+    ans = [[NSMutableString alloc] init];
     return [super initWithWindowNibName:@"CalculatorWindowController"];
 }
 
@@ -33,7 +36,8 @@
 {
     [super windowDidLoad];
     
-    /* init member vars */
+        // init member vars
+    
     [self resetAll];
 }
 
@@ -45,11 +49,14 @@
     [current_value setString:@""];
     [answer_box setStringValue:@"0"];
     [equation setStringValue:@""];
+    [ans setString:@""];
     
     operator_called = NO;
     equals_was_last_called = NO;
     decimal_placed = NO;
     was_last_close_bracket = NO;
+    
+    is2nd = NO;
     
     [e reset];
 }
@@ -84,17 +91,24 @@
         // check that length is valid for removing 1 element
     
     if (len > 0) {
-        [equation setStringValue:[[equation stringValue] substringToIndex:[[equation stringValue] length] - 1]];
+        [equation setStringValue:[
+                [equation stringValue] substringToIndex:[[equation stringValue] length] - 1]
+         ];
     }
     
         // if current_value's last remaining char is deleted, make it equal to 0
         // else if it has more than 1 char remaining, simply subtract one
     
     if ([current_value length] == 1) {
-        [self UpdateCurrentValueWithString:[current_value substringToIndex:[current_value length] - 1]];
+        [self UpdateCurrentValueWithString:[
+                current_value substringToIndex:[current_value length] - 1]
+         ];
+        
         [answer_box setStringValue:ZERO];
     } else if ([current_value length] > 0) {
-        [self UpdateCurrentValueWithString:[current_value substringToIndex:[current_value length] - 1]];
+        [self UpdateCurrentValueWithString:[
+                current_value substringToIndex:[current_value length] - 1]
+         ];
     }
     
         // else do nothing
@@ -204,7 +218,7 @@
 //-----------------------------------------------------
 - (IBAction) On_Decimal:(id)sender
 {
-        // don't want to insert multiple decimals
+        // don't want to insert multiple decimals in one value
     
     if (!decimal_placed) {
         
@@ -411,6 +425,15 @@
 //-----------------------------------------------------
 - (IBAction) On_Equals:(id)sender
 {
+        // check if 2nd button has been pressed
+        // if yes, go to On_Ans
+    
+    if (is2nd) {
+        return [self On_Ans:sender];
+    }
+    
+        // else we continue;
+    
         // if user has pressed equals twice, we don't want to compute twice,
         // so only perform operation on the first time equals was last called
     
@@ -440,6 +463,34 @@
         
         decimal_placed = NO;
         was_last_close_bracket = NO;
+    }
+}
+
+//-----------------------------------------------------
+// 2nd function of equals button
+//-----------------------------------------------------
+- (IBAction) On_Ans:(id)sender
+{
+    if (operator_called) {
+        NSLog(@"logged");
+    }
+}
+
+//-----------------------------------------------------
+// Method called when 2nd button is pressed
+//-----------------------------------------------------
+- (IBAction) On_2nd:(id)sender
+{
+    is2nd = !is2nd;
+    
+        // equals button display change
+    
+    if (is2nd) {
+        [equals_button setTitle:@"Ans"];
+        [equals_button setKeyEquivalent:@""];
+    } else {
+        [equals_button setTitle:@"="];
+        [equals_button setKeyEquivalent:@"\r"];
     }
 }
 

@@ -18,10 +18,13 @@
 @interface CalculatorWindowController : NSWindowController
 {
     NSMutableString *current_value;
+    NSMutableString *ans;
+    
     BOOL operator_called;
     BOOL equals_was_last_called;
     BOOL decimal_placed;
     BOOL was_last_close_bracket;
+    BOOL is2nd;
     
     Equation *e;
 }
@@ -29,6 +32,7 @@
 @property (weak) IBOutlet NSTextField *answer_box;
 @property (weak) IBOutlet NSTextField *equation;
 @property (weak) IBOutlet NSMatrix *matrix_degrad;
+@property (weak) IBOutlet NSButton *equals_button;
 
 - (id) init;
 - (void) windowDidLoad;
@@ -76,7 +80,9 @@
 - (void) On_RegOp:(NSString *)op;
 
 - (IBAction) On_Equals:(id)sender;
+- (IBAction) On_Ans:(id)sender;
 
+- (IBAction) On_2nd:(id)sender;
 
 
 @end
